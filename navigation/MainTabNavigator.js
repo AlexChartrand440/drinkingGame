@@ -9,9 +9,9 @@ import TabBarIcon from "../components/TabBarIcon";
 import HomeScreen from "../screens/HomeScreen";
 import LinksScreen from "../screens/LinksScreen";
 import SettingsScreen from "../screens/SettingsScreen";
-import PlayerSelection from "../screens/PlayerSelection";
+import PlayerSelectionContainer from "../screens/PlayerSelection/PlayerSelectionContainer";
 
-const PlayerSelectionStack = createStackNavigator({ PlayerSelection });
+const PlayerSelectionStack = createStackNavigator({ PlayerSelectionContainer });
 
 PlayerSelectionStack.navigationOptions = {
   tabBarLabel: "Players",
