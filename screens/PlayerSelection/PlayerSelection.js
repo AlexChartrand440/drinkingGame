@@ -1,38 +1,14 @@
 import React from "react";
 
-import { View, Text, StyleSheet, Button } from "react-native";
+import { View, Text, StyleSheet } from "react-native";
 import { ScrollView, TextInput } from "react-native-gesture-handler";
 import { Icon } from "expo";
+import Styles from "../../constants/Styles";
 
 export default class PlayerSelection extends React.Component {
-  constructor(props) {
-    super(props);
-    this.state = {
-      users: [{ name: "Jules" }]
-    };
-  }
-
   static navigationOptions = {
     header: null
   };
-
-  onChangeUserName(value, index) {
-    let newUsers = [...this.state.users];
-    newUsers[index].name = value;
-    this.setState({ users: newUsers });
-  }
-
-  addNewPlayer() {
-    let newUsers = [...this.state.users];
-    newUsers.push({});
-    this.setState({ users: newUsers });
-  }
-
-  deletePlayer(index) {
-    let newUsers = [...this.state.users];
-    newUsers.splice(index, 1);
-    this.setState({ users: newUsers });
-  }
 
   render() {
     const {
@@ -42,13 +18,13 @@ export default class PlayerSelection extends React.Component {
       onChangeSetPlayerName
     } = this.props;
     return (
-      <View style={styles.container}>
-        <View style={styles.titleContainer}>
-          <Text style={styles.titleText}>Selection des joueurs : </Text>
+      <View style={Styles.container}>
+        <View style={Styles.headerContainer}>
+          <Text style={Styles.headerText}>Selection des joueurs : </Text>
         </View>
         <ScrollView
           ref={ref => (this.scrollView = ref)}
-          style={styles.playersContainer}
+          style={Styles.container}
           contentContainerStyle={styles.playersContainerContent}
           onContentSizeChange={() => {
             this.scrollView.scrollToEnd({ animated: true });
@@ -90,23 +66,6 @@ export default class PlayerSelection extends React.Component {
 }
 
 const styles = StyleSheet.create({
-  container: {
-    flex: 1
-  },
-  titleContainer: {
-    alignItems: "center",
-    marginTop: 50,
-    marginBottom: 70
-  },
-  titleText: {
-    fontSize: 21,
-    color: "rgba(96,100,109, 1)",
-    lineHeight: 24,
-    textAlign: "center"
-  },
-  playersContainer: {
-    flex: 1
-  },
   playersContainerContent: {
     alignItems: "center"
   },
