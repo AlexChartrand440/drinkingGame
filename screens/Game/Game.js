@@ -1,7 +1,8 @@
 import React from "react";
 
-import ModeSelector from "../../components/Game/ModeSelector/ModeSelector";
-import { View, Text } from "react-native";
+import { View, Text, StyleSheet } from "react-native";
+import { Icon } from "expo";
+import ModeSelectorContainer from "../../components/Game/ModeSelector/ModeSelectorContainer";
 
 export default class Game extends React.Component {
   static navigationOptions = {
@@ -9,15 +10,51 @@ export default class Game extends React.Component {
   };
 
   render() {
-    const { hasPlayer } = this.props;
+    const { hasPlayer, gamemode } = this.props;
     if (hasPlayer) {
-      return <ModeSelector />;
+      if (!gamemode) {
+        return <ModeSelectorContainer />;
+      } else {
+        //TODO : Composant de gestion du jeu
+        return (
+          <View style={styles.errorContainer}>
+            <Icon.Ionicons
+              name={"md-alert"}
+              size={80}
+              color="orange"
+              alt="Alert"
+            />
+            <Text style={styles.errorText}>ggwp</Text>
+          </View>
+        );
+      }
     } else {
+      //TODO : Component de warning ?
       return (
-        <View>
-          <Text>Vous devez selectionner des joueurs pour pouvoir jouer.</Text>
+        <View style={styles.errorContainer}>
+          <Icon.Ionicons
+            name={"md-alert"}
+            size={80}
+            color="orange"
+            alt="Alert"
+          />
+          <Text style={styles.errorText}>
+            Vous devez selectionner des joueurs pour pouvoir jouer.
+          </Text>
         </View>
       );
     }
   }
 }
+
+const styles = StyleSheet.create({
+  errorContainer: {
+    flex: 1,
+    justifyContent: "center",
+    alignItems: "center"
+  },
+  errorText: {
+    textAlign: "center",
+    fontSize: 28
+  }
+});

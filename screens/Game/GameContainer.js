@@ -2,10 +2,11 @@ import { connect } from "react-redux";
 import Game from "./Game";
 
 import { hasPlayer } from "../../redux/reducers/players";
-
+import { getGamemode } from "../../redux/reducers/game";
 const mapStateToProps = (state, ownProps) => {
   return {
-    hasPlayer: hasPlayer(state)
+    hasPlayer: hasPlayer(state),
+    gamemode: getGamemode(state)
   };
 };
 

@@ -22,6 +22,6 @@ export default function player(state = initialState, action) {
   }
 }
 
-export const getPlayers = state => state.players;
+export const getPlayers = state => state.player.players;
 export const hasPlayer = state =>
-  state.players.some(player => player.name !== "");
+  state.player.players.some(player => player.name !== "");
