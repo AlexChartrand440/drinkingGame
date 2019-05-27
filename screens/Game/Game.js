@@ -3,6 +3,7 @@ import React from "react";
 import { View, Text, StyleSheet } from "react-native";
 import { Icon } from "expo";
 import ModeSelectorContainer from "../../components/Game/ModeSelector/ModeSelectorContainer";
+import Cards from "../../components/Game/Cards/Cards";
 
 export default class Game extends React.Component {
   static navigationOptions = {
@@ -16,17 +17,7 @@ export default class Game extends React.Component {
         return <ModeSelectorContainer />;
       } else {
         //TODO : Composant de gestion du jeu
-        return (
-          <View style={styles.errorContainer}>
-            <Icon.Ionicons
-              name={"md-alert"}
-              size={80}
-              color="orange"
-              alt="Alert"
-            />
-            <Text style={styles.errorText}>ggwp</Text>
-          </View>
-        );
+        return <Cards />;
       }
     } else {
       //TODO : Component de warning ?

@@ -1,9 +1,10 @@
 import React from "react";
 
-import { View, Text, StyleSheet } from "react-native";
+import { Button, View, Text, StyleSheet } from "react-native";
 import { ScrollView, TextInput } from "react-native-gesture-handler";
 import { Icon } from "expo";
 import Styles from "../../constants/Styles";
+import Colors from "../../constants/Colors";
 
 export default class PlayerSelection extends React.Component {
   static navigationOptions = {
@@ -60,6 +61,12 @@ export default class PlayerSelection extends React.Component {
             alt="Add player Icon"
           />
         </ScrollView>
+        <Button
+          onPress={() => this.props.navigation.navigate("Game")}
+          title="Jouer"
+          color={Colors.tabIconSelected}
+          accessibilityLabel="Lancer une partie"
+        />
       </View>
     );
   }

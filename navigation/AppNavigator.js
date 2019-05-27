@@ -1,10 +1,17 @@
-import React from 'react';
-import { createAppContainer, createSwitchNavigator } from 'react-navigation';
+import React from "react";
+import { createAppContainer, createStackNavigator } from "react-navigation";
 
-import MainTabNavigator from './MainTabNavigator';
+import PlayerSelectionContainer from "../screens/PlayerSelection/PlayerSelectionContainer";
+import GameContainer from "../screens/Game/GameContainer";
 
-export default createAppContainer(createSwitchNavigator({
-  // You could add another route here for authentication.
-  // Read more at https://reactnavigation.org/docs/en/auth-flow.html
-  Main: MainTabNavigator,
-}));
+export default createAppContainer(
+  createStackNavigator(
+    {
+      PlayerSelection: PlayerSelectionContainer,
+      Game: GameContainer
+    },
+    {
+      initialRouteName: "PlayerSelection"
+    }
+  )
+);
