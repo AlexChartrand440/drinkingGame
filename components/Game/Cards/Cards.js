@@ -1,7 +1,6 @@
 import React, { PureComponent } from "react";
 
 import { View, Text, StyleSheet, Dimensions } from "react-native";
-import { ScreenOrientation } from "expo";
 import Styles from "../../../constants/Styles";
 import { FlatList } from "react-native-gesture-handler";
 
@@ -12,13 +11,6 @@ export default class ModeSelector extends React.Component {
   static navigationOptions = {
     header: null
   };
-  componentDidMount() {
-    ScreenOrientation.allowAsync(ScreenOrientation.Orientation.LANDSCAPE_RIGHT);
-  }
-
-  componentWillUnmount() {
-    ScreenOrientation.allowAsync(ScreenOrientation.Orientation.PORTRAIT);
-  }
   render() {
     const { cards, onReachEnd } = this.props;
     return (
@@ -44,7 +36,6 @@ export default class ModeSelector extends React.Component {
             this.onEndReachedCalledDuringMomentum = false;
           }}
           onEndReached={() => {
-            console.log("end reached");
             if (!this.onEndReachedCalledDuringMomentum) {
               onReachEnd(cards);
               this.onEndReachedCalledDuringMomentum = true;

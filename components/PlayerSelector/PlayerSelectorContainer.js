@@ -3,13 +3,14 @@ import {
   addPlayer,
   deletePlayer,
   setPlayerName
-} from "../../redux/actions/players";
-import PlayerSelection from "./PlayerSelection";
-import { getPlayers } from "../../redux/reducers/players";
+} from "../../redux/actions/game";
+import PlayerSelector from "./PlayerSelector";
+import { getPlayers, getGamemode } from "../../redux/reducers/game";
 
 const mapStateToProps = (state, ownProps) => {
   return {
-    players: getPlayers(state)
+    players: getPlayers(state),
+    gameMode: getGamemode(state)
   };
 };
 
@@ -23,13 +24,19 @@ const mapDispatchToProps = (dispatch, ownProps) => {
     },
     onChangeSetPlayerName: (index, name) => {
       dispatch(setPlayerName(index, name));
+    },
+    onResumeGame: () => {
+      ownProps.navigation.navigate("Game");
+    },
+    onGoToModeSelection: () => {
+      ownProps.navigation.navigate("ModeSelection");
     }
   };
 };
 
-const PlayerSelectionContainer = connect(
+const PlayerSelectorContainer = connect(
   mapStateToProps,
   mapDispatchToProps
-)(PlayerSelection);
+)(PlayerSelector);
 
-export default PlayerSelectionContainer;
+export default PlayerSelectorContainer;

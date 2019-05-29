@@ -2,9 +2,8 @@ import React from "react";
 
 import { View, Text, StyleSheet, TouchableHighlight } from "react-native";
 import { ScrollView } from "react-native-gesture-handler";
-import Styles from "../../../constants/Styles";
-import Colors from "../../../constants/Colors";
-import GameModes from "../../../ressources/gameModes";
+import Styles from "../../constants/Styles";
+import GameModes from "../../ressources/gameModes";
 
 export default class ModeSelector extends React.Component {
   static navigationOptions = {

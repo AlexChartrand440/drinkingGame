@@ -1,9 +1,9 @@
 {
   "expoServerNgrokUrl": "https://rg-736.anonymous.drinkinggame.exp.direct",
   "packagerNgrokUrl": "https://packager.rg-736.anonymous.drinkinggame.exp.direct",
-  "ngrokPid": 10896,
+  "ngrokPid": 2020,
   "packagerPort": 19001,
-  "packagerPid": 12752,
+  "packagerPid": 8588,
   "expoServerPort": 19000,
   "webpackServerPort": null,
   "devToolsPort": 19002

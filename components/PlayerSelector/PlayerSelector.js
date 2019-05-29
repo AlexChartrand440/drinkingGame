@@ -6,7 +6,7 @@ import { Icon } from "expo";
 import Styles from "../../constants/Styles";
 import Colors from "../../constants/Colors";
 
-export default class PlayerSelection extends React.Component {
+export default class PlayerSelector extends React.Component {
   static navigationOptions = {
     header: null
   };
@@ -14,9 +14,12 @@ export default class PlayerSelection extends React.Component {
   render() {
     const {
       players,
+      gameMode,
       onClickAddPlayer,
       onClickDeletePlayer,
-      onChangeSetPlayerName
+      onChangeSetPlayerName,
+      onResumeGame,
+      onGoToModeSelection
     } = this.props;
     return (
       <View style={Styles.container}>
@@ -61,11 +64,19 @@ export default class PlayerSelection extends React.Component {
             alt="Add player Icon"
           />
         </ScrollView>
+        {gameMode && (
+          <Button
+            onPress={() => onResumeGame()}
+            title="Reprendre la partie"
+            color={Colors.warningBackground}
+            accessibilityLabel="Reprendre la partie"
+          />
+        )}
         <Button
-          onPress={() => this.props.navigation.navigate("Game")}
-          title="Jouer"
+          onPress={() => onGoToModeSelection()}
+          title="Selectionner un mode de jeu"
           color={Colors.tabIconSelected}
-          accessibilityLabel="Lancer une partie"
+          accessibilityLabel="Selectionner un mode de jeu"
         />
       </View>
     );
