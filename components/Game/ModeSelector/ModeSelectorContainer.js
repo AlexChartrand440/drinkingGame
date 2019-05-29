@@ -1,11 +1,13 @@
 import { connect } from "react-redux";
-import { selectGameMode } from "../../../redux/actions/game";
+import { selectGameMode, addCard } from "../../../redux/actions/game";
 import ModeSelector from "./ModeSelector";
 
 const mapDispatchToProps = (dispatch, ownProps) => {
   return {
     onSelectGamemode: gamemodeId => {
       dispatch(selectGameMode(gamemodeId));
+      dispatch(addCard({ key: "0", text: "0" }));
+      dispatch(addCard({ key: "1", text: "1" }));
     }
   };
 };

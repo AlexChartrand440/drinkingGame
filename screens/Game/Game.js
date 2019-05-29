@@ -3,7 +3,7 @@ import React from "react";
 import { View, Text, StyleSheet } from "react-native";
 import { Icon } from "expo";
 import ModeSelectorContainer from "../../components/Game/ModeSelector/ModeSelectorContainer";
-import Cards from "../../components/Game/Cards/Cards";
+import CardsContainer from "../../components/Game/Cards/CardsContainer";
 
 export default class Game extends React.Component {
   static navigationOptions = {
@@ -17,7 +17,7 @@ export default class Game extends React.Component {
         return <ModeSelectorContainer />;
       } else {
         //TODO : Composant de gestion du jeu
-        return <Cards />;
+        return <CardsContainer />;
       }
     } else {
       //TODO : Component de warning ?

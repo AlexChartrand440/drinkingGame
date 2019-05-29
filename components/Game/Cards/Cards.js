@@ -1,8 +1,12 @@
-import React from "react";
+import React, { PureComponent } from "react";
 
-import { View, Text, StyleSheet, ScrollView, Dimensions } from "react-native";
+import { View, Text, StyleSheet, Dimensions } from "react-native";
 import { ScreenOrientation } from "expo";
 import Styles from "../../../constants/Styles";
+import { FlatList } from "react-native-gesture-handler";
+
+const { width, height } = Dimensions.get("window");
+var deviceWidth = width > height ? width : height;
 
 export default class ModeSelector extends React.Component {
   static navigationOptions = {
@@ -16,75 +20,69 @@ export default class ModeSelector extends React.Component {
     ScreenOrientation.allowAsync(ScreenOrientation.Orientation.PORTRAIT);
   }
   render() {
-    const { onSelectGamemode } = this.props;
+    const { cards, onReachEnd } = this.props;
     return (
-      <View style={Styles.container}>
-        <ScrollView
+      <View style={styles.container}>
+        <FlatList
+          style={styles.flatlist}
           horizontal={true}
           pagingEnabled={true}
           showsHorizontalScrollIndicator={false}
-        >
-          <View style={styles.firstView}>
-            <Text style={styles.headerText}>First View</Text>
-          </View>
-
-          <View style={styles.secondView}>
-            <Text style={styles.headerText}>Second View</Text>
-          </View>
-
-          <View style={styles.thirdView}>
-            <Text style={styles.headerText}>Third View</Text>
-          </View>
-
-          <View style={styles.forthView}>
-            <Text style={styles.headerText}>Forth View</Text>
-          </View>
-        </ScrollView>
+          data={[...cards]}
+          getItemLayout={(data, index) => ({
+            length: deviceWidth,
+            offset: deviceWidth * index,
+            index
+          })}
+          renderItem={({ item }) => {
+            return <Card text={item.text} />;
+          }}
+          centerContent={true}
+          initialScrollIndex={cards.length - 2}
+          initialNumToRender={3}
+          onMomentumScrollBegin={() => {
+            this.onEndReachedCalledDuringMomentum = false;
+          }}
+          onEndReached={() => {
+            console.log("end reached");
+            if (!this.onEndReachedCalledDuringMomentum) {
+              onReachEnd(cards);
+              this.onEndReachedCalledDuringMomentum = true;
+            }
+          }}
+          onEndReachedThreshold={0.05}
+        />
       </View>
     );
   }
 }
 
-var deviceWidth = Dimensions.get("window").height;
+class Card extends PureComponent {
+  render() {
+    return (
+      <View style={styles.firstView}>
+        <Text>{this.props.text}</Text>
+      </View>
+    );
+  }
+}
 
 const styles = StyleSheet.create({
   container: {
-    flex: 1,
-    justifyContent: "center",
-    alignItems: "center",
-    backgroundColor: "#e5e5e5"
+    position: "absolute",
+    top: 0,
+    bottom: 0,
+    left: 0,
+    right: 0,
+    backgroundColor: "blue"
   },
-  headerText: {
-    fontSize: 30,
-    textAlign: "center",
-    margin: 10,
-    color: "white",
-    fontWeight: "bold"
+  flatlist: {
+    width: "100%",
+    backgroundColor: "green"
   },
   firstView: {
     width: deviceWidth,
     backgroundColor: "#F44336",
-    justifyContent: "center",
-    alignItems: "center",
-    flexDirection: "row"
-  },
-  secondView: {
-    width: deviceWidth,
-    backgroundColor: "#9C27B0",
-    justifyContent: "center",
-    alignItems: "center",
-    flexDirection: "row"
-  },
-  thirdView: {
-    width: deviceWidth,
-    backgroundColor: "#3F51B5",
-    justifyContent: "center",
-    alignItems: "center",
-    flexDirection: "row"
-  },
-  forthView: {
-    width: deviceWidth,
-    backgroundColor: "#009688",
     justifyContent: "center",
     alignItems: "center",
     flexDirection: "row"
