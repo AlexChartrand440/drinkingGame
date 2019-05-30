@@ -6,8 +6,6 @@ const mapDispatchToProps = (dispatch, ownProps) => {
   return {
     onSelectGamemode: gamemodeId => {
       dispatch(selectGameMode(gamemodeId));
-      dispatch(addCard({ key: "0", text: "0" }));
-      dispatch(addCard({ key: "1", text: "1" }));
       ownProps.navigation.navigate("Game");
     }
   };

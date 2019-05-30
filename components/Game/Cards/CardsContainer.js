@@ -1,11 +1,16 @@
 import { connect } from "react-redux";
-import { addCard } from "../../../redux/actions/game";
-import Cards from "./Cards";
-import { getCards } from "../../../redux/reducers/game";
+import {
+  addCard,
+  decrementCurrentCard,
+  incrementCurrentCard
+} from "../../../redux/actions/game";
+import Cards from "./CardsClique";
+import { getCards, getCurrentCardIndex } from "../../../redux/reducers/game";
 
 const mapStateToProps = state => {
   return {
-    cards: getCards(state)
+    cards: getCards(state),
+    currentCardIndex: getCurrentCardIndex(state)
   };
 };
 const mapDispatchToProps = dispatch => {
@@ -17,6 +22,12 @@ const mapDispatchToProps = dispatch => {
           text: "" + cards.length
         })
       );
+    },
+    onPressBack: () => {
+      dispatch(decrementCurrentCard());
+    },
+    onPressNextCard: () => {
+      dispatch(incrementCurrentCard());
     }
   };
 };

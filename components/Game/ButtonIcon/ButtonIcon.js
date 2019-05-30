@@ -53,21 +53,23 @@ const styles = StyleSheet.create({
 export const RedirectToPlayerIcon = ({ onPress }) => (
   <ButtonIcon
     icon="md-person"
-    position={{ top: 50, left: 3 }}
+    position={{ top: 50, right: 30 }}
     color={"black"}
     onPress={() => onPress()}
     alt={"Modifier les joueurs de la parties"}
     size={30}
+    underlayColor={"rgba(0,0,0,0.2)"}
   />
 );
 
 export const RedirectToModeSelection = ({ onPress }) => (
   <ButtonIcon
     icon="md-arrow-round-back"
-    position={{ top: 100, left: 3 }}
+    position={{ top: 100, right: 30 }}
     color={"black"}
     onPress={() => onPress()}
     alt={"Retourner à la selection des modes"}
     size={30}
+    underlayColor={"rgba(0,0,0,0.2)"}
   />
 );
