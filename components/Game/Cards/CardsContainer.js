@@ -5,24 +5,21 @@ import {
   incrementCurrentCard
 } from "../../../redux/actions/game";
 import Cards from "./CardsClique";
-import { getCards, getCurrentCardIndex } from "../../../redux/reducers/game";
+import {
+  getCards,
+  getCurrentCardIndex,
+  isEndCardSelected
+} from "../../../redux/reducers/game";
 
 const mapStateToProps = state => {
   return {
     cards: getCards(state),
-    currentCardIndex: getCurrentCardIndex(state)
+    currentCardIndex: getCurrentCardIndex(state),
+    isEndCardSelected: isEndCardSelected(state)
   };
 };
 const mapDispatchToProps = dispatch => {
   return {
-    onReachEnd: cards => {
-      dispatch(
-        addCard({
-          key: "" + cards.length,
-          text: "" + cards.length
-        })
-      );
-    },
     onPressBack: () => {
       dispatch(decrementCurrentCard());
     },

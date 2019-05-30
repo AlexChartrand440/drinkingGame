@@ -22,7 +22,8 @@ export default class ModeSelector extends React.Component {
       cards,
       currentCardIndex,
       onPressBack,
-      onPressNextCard
+      onPressNextCard,
+      isEndCardSelected
     } = this.props;
     return (
       <View style={styles.container}>
@@ -43,7 +44,9 @@ export default class ModeSelector extends React.Component {
         </TouchableHighlight>
         <TouchableHighlight
           style={styles.container}
-          onPress={event => onPressNextCard()}
+          onPress={() => {
+            !isEndCardSelected && onPressNextCard();
+          }}
           underlayColor={"transparent"}
         >
           <Card text={cards[currentCardIndex].text} />
