@@ -49,7 +49,10 @@ export default class ModeSelector extends React.Component {
           }}
           underlayColor={"transparent"}
         >
-          <Card text={cards[currentCardIndex].text} />
+          <Card
+            text={cards[currentCardIndex].text}
+            title={cards[currentCardIndex].title}
+          />
         </TouchableHighlight>
       </View>
     );
@@ -59,8 +62,9 @@ export default class ModeSelector extends React.Component {
 class Card extends PureComponent {
   render() {
     return (
-      <View style={styles.firstView}>
-        <Text>{this.props.text}</Text>
+      <View style={styles.cardView}>
+        <Text style={styles.cardTitle}>{this.props.title}</Text>
+        <Text style={styles.cardText}>{this.props.text}</Text>
       </View>
     );
   }
@@ -85,11 +89,20 @@ const styles = StyleSheet.create({
     paddingLeft: 10,
     paddingRight: 10
   },
-  firstView: {
+  cardView: {
     width: deviceWidth,
     height: "100%",
-    justifyContent: "center",
-    alignItems: "center",
-    flexDirection: "row"
+    flexDirection: "column",
+    padding: 30
+  },
+  cardText: {
+    fontSize: 18,
+    textAlign: "center",
+    padding: 20
+  },
+  cardTitle: {
+    fontSize: 26,
+    textAlign: "center",
+    marginBottom: 30
   }
 });
