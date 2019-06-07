@@ -16,7 +16,7 @@ import { GameModeId } from "../../ressources/gameModes";
 
 const initialState = {
   cards: [],
-  players: [{ name: "" }],
+  players: [{ name: "", errors: [] }],
   currentCardIndex: 0
 };
 
@@ -74,14 +74,17 @@ export default function game(state = initialState, action) {
       };
     /** Players */
     case ADD_PLAYER:
-      return { ...state, players: [...state.players, { name: "" }] };
+      return {
+        ...state,
+        players: [...state.players, { name: "", errors: [] }]
+      };
     case DELETE_PLAYER:
       let newPlayers = [...state.players];
       newPlayers.splice(action.index, 1);
       return { ...state, players: newPlayers };
     case SET_PLAYER_NAME: {
       let newPlayers = [...state.players];
-      newPlayers[action.index] = { name: action.name };
+      newPlayers[action.index] = { name: action.name, errors: action.errors };
       if (state.gamemode) {
         let newCards = [...state.cards];
         let { nextCard, newDeck } = regenerateLastCard(
@@ -120,7 +123,8 @@ export const isEndCardSelected = state =>
 export const getPlayers = state => state.game.players;
 export const hasPlayer = state =>
   state.game.players.some(player => player.name !== "");
-
+export const arePlayersNameCorrect = state =>
+  !state.game.players.some(player => player.errors.length > 0);
 /**
  * Permet de regenerer la dernière carte, c'est à dire
  * Modifier le deck en ajoutant 1 occurances à la dernière carte tirée
@@ -212,6 +216,10 @@ function isCardInGameMode(card, gamemode) {
   );
 }
 
+/**
+ * Fonction permettant de retourner une carte où
+ * les variables contenues dans son texte son alimenté
+ */
 function proccessCard(card, players) {
   let newCard = { ...card };
   let playersAvailable = [...players];

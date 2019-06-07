@@ -31,5 +31,24 @@ export function deletePlayer(index) {
 }
 
 export function setPlayerName(index, name) {
-  return { type: SET_PLAYER_NAME, index, name };
+  let { newName, errors } = controlePlayerName(name);
+  return { type: SET_PLAYER_NAME, index, name: newName, errors };
+}
+
+function controlePlayerName(name) {
+  let newName = name.trim();
+  let format = /[ !@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?]/;
+  if (newName.length < 1) {
+    return { newName, errors: ["Le nom d'un joueur ne peux pas être vide"] };
+  } else {
+    //Si des caractères spéciaux sont présents
+    if (format.test(newName)) {
+      return {
+        newName,
+        errors: ["Le nom d'un joueur ne peux pas contenir de caractère special"]
+      };
+    }
+  }
+
+  return { newName, errors: [] };
 }

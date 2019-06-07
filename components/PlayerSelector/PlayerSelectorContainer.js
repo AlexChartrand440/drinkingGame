@@ -5,12 +5,19 @@ import {
   setPlayerName
 } from "../../redux/actions/game";
 import PlayerSelector from "./PlayerSelector";
-import { getPlayers, getGamemode } from "../../redux/reducers/game";
+import {
+  getPlayers,
+  getGamemode,
+  arePlayersNameCorrect,
+  hasPlayer
+} from "../../redux/reducers/game";
 
 const mapStateToProps = (state, ownProps) => {
   return {
     players: getPlayers(state),
-    gameMode: getGamemode(state)
+    gameMode: getGamemode(state),
+    arePlayersNameCorrect: arePlayersNameCorrect(state),
+    hasPlayer: hasPlayer(state)
   };
 };
 

@@ -19,8 +19,12 @@ export default class PlayerSelector extends React.Component {
       onClickDeletePlayer,
       onChangeSetPlayerName,
       onResumeGame,
-      onGoToModeSelection
+      onGoToModeSelection,
+      arePlayersNameCorrect,
+      hasPlayer
     } = this.props;
+
+    let isPlayerListCorrect = hasPlayer && arePlayersNameCorrect;
     return (
       <View style={Styles.container}>
         <View style={Styles.headerContainer}>
@@ -35,24 +39,34 @@ export default class PlayerSelector extends React.Component {
           }}
         >
           {players.map((user, index) => (
-            <View key={index} style={styles.playerContainer}>
-              <TextInput
-                key={index + ".textInput"}
-                style={styles.playerNameInput}
-                value={user.name}
-                onChange={event =>
-                  onChangeSetPlayerName(index, event.nativeEvent.text)
-                }
-              />
-              <Icon.Ionicons
-                key={index + ".rmIcon"}
-                name={"md-remove-circle-outline"}
-                style={styles.playerDeleteIcon}
-                size={35}
-                color="black"
-                onPress={() => onClickDeletePlayer(index)}
-                alt="Delete player Icon"
-              />
+            <View key={index}>
+              <View style={styles.playerContainer}>
+                <TextInput
+                  key={index + ".textInput"}
+                  style={styles.playerNameInput}
+                  value={user.name}
+                  onChange={event =>
+                    onChangeSetPlayerName(index, event.nativeEvent.text)
+                  }
+                />
+                <Icon.Ionicons
+                  key={index + ".rmIcon"}
+                  name={"md-remove-circle-outline"}
+                  style={styles.playerDeleteIcon}
+                  size={35}
+                  color="black"
+                  onPress={() => onClickDeletePlayer(index)}
+                  alt="Delete player Icon"
+                />
+              </View>
+              <View>
+                {user.errors &&
+                  user.errors.map((err, index) => (
+                    <Text style={styles.errorText} key={index}>
+                      {err}
+                    </Text>
+                  ))}
+              </View>
             </View>
           ))}
           <Icon.Ionicons
@@ -64,7 +78,7 @@ export default class PlayerSelector extends React.Component {
             alt="Add player Icon"
           />
         </ScrollView>
-        {gameMode && (
+        {isPlayerListCorrect && gameMode && (
           <Button
             onPress={() => onResumeGame()}
             title="Reprendre la partie"
@@ -72,12 +86,14 @@ export default class PlayerSelector extends React.Component {
             accessibilityLabel="Reprendre la partie"
           />
         )}
-        <Button
-          onPress={() => onGoToModeSelection()}
-          title="Selectionner un mode de jeu"
-          color={Colors.tabIconSelected}
-          accessibilityLabel="Selectionner un mode de jeu"
-        />
+        {isPlayerListCorrect && (
+          <Button
+            onPress={() => onGoToModeSelection()}
+            title="Selectionner un mode de jeu"
+            color={Colors.tabIconSelected}
+            accessibilityLabel="Selectionner un mode de jeu"
+          />
+        )}
       </View>
     );
   }
@@ -101,6 +117,14 @@ const styles = StyleSheet.create({
     borderBottomWidth: 1,
     marginRight: 12,
     paddingBottom: 3
+  },
+  errorText: {
+    textAlign: "center",
+    height: 40,
+    width: 240,
+    fontSize: 16,
+    marginRight: 12,
+    color: "red"
   },
   playerDeleteIcon: {
     alignSelf: "center"
