@@ -98,7 +98,7 @@ const styles = StyleSheet.create({
   cardText: {
     fontSize: 18,
     textAlign: "center",
-    padding: 20
+    padding: 30
   },
   cardTitle: {
     fontSize: 26,

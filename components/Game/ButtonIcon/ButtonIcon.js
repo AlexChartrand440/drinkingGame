@@ -53,7 +53,7 @@ const styles = StyleSheet.create({
 export const RedirectToPlayerIcon = ({ onPress }) => (
   <ButtonIcon
     icon="md-person"
-    position={{ top: 50, right: 30 }}
+    position={{ top: 30, right: 20 }}
     color={"black"}
     onPress={() => onPress()}
     alt={"Modifier les joueurs de la parties"}
@@ -64,8 +64,8 @@ export const RedirectToPlayerIcon = ({ onPress }) => (
 
 export const RedirectToModeSelection = ({ onPress }) => (
   <ButtonIcon
-    icon="md-arrow-round-back"
-    position={{ top: 100, right: 30 }}
+    icon="md-home"
+    position={{ top: 30, right: 70 }}
     color={"black"}
     onPress={() => onPress()}
     alt={"Retourner à la selection des modes"}
