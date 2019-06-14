@@ -27,10 +27,6 @@ export default function game(state = initialState, action) {
   switch (action.type) {
     /** GameMode */
     case SELECT_GAMEMODE:
-      /** A la selection d'un mode de jeu, on initialise la partie
-       * on récupère donc les cartes d'introduction (au moins deux)
-       * et on récupère un deck, qui corresponds aux cartes appartement à se mode de jeu
-       */
       let { introCards, deck } = initializeGameMode(
         action.gamemode,
         state.players
@@ -80,36 +76,27 @@ export default function game(state = initialState, action) {
         ...state,
         players: [...state.players, { name: "", errors: [] }]
       };
-    case DELETE_PLAYER:
+    case DELETE_PLAYER: {
       let newPlayers = [...state.players];
       newPlayers.splice(action.index, 1);
       newPlayers = controlAllPlayer(newPlayers);
-      return { ...state, players: newPlayers };
+      return {
+        ...state,
+        players: newPlayers,
+        ...recalculateGameState(state, newPlayers)
+      };
+    }
     case SET_PLAYER_NAME: {
       let newPlayers = [...state.players];
-      newPlayers[action.index] = { name: action.name, errors: action.errors };
+      newPlayers[action.index] = { name: action.name };
       newPlayers = controlAllPlayer(newPlayers);
-      if (state.gamemode && !isGameFinished({ game: { ...state } })) {
-        let newCards = [...state.cards];
-        let { nextCard, newDeck } = regenerateLastCard(
-          newPlayers,
-          state.deck,
-          newCards
-        );
-        newCards.splice(newCards.length - 1, 1, nextCard);
-        return {
-          ...state,
-          players: newPlayers,
-          cards: [...newCards],
-          deck: [...newDeck]
-        };
-      } else {
-        return {
-          ...state,
-          players: newPlayers
-        };
-      }
+      return {
+        ...state,
+        players: newPlayers,
+        ...recalculateGameState(state, newPlayers)
+      };
     }
+    //Si une partie est en cours, on va recalculé la dernière carte précalculée
     default:
       return state;
   }
@@ -124,12 +111,52 @@ export const isGameFinished = state =>
 export const isEndCardSelected = state =>
   state.game.cards[state.game.currentCardIndex].title === endCard.title;
 export const isFirstCardSelected = state => state.game.currentCardIndex === 0;
+export const isInIntroduction = state =>
+  state.game.cards[state.game.cards.length - 1].introCard;
 /** Player */
 export const getPlayers = state => state.game.players;
 export const hasPlayer = state =>
   state.game.players.some(player => player.name !== "");
 export const arePlayersNameCorrect = state =>
   !state.game.players.some(player => player.errors.length > 0);
+
+/** FUNCTIONS */
+
+/**
+ * Fonction effectuant un recalcule de l'état du jeu en cas
+ * de changement dans les joueurs
+ */
+function recalculateGameState(state, newPlayers) {
+  console.log(state);
+  //Si un mode de jeu est selectionné et que la partie n'est pas fini
+  if (state.gamemode && !isGameFinished({ game: { ...state } })) {
+    //Si on est encore dans les cartes d'introduction, on redemarre la partie
+    if (isInIntroduction({ game: { ...state } })) {
+      let { introCards, deck } = initializeGameMode(state.gamemode, newPlayers);
+      return {
+        cards: [...introCards],
+        deck: [...deck],
+        currentCardIndex: initialState.currentCardIndex
+      };
+      //Sinon on regenère seulement la dernière carte
+    } else {
+      let newCards = [...state.cards];
+      let { nextCard, newDeck } = regenerateLastCard(
+        newPlayers,
+        state.deck,
+        newCards
+      );
+      newCards.splice(newCards.length - 1, 1, nextCard);
+      return {
+        cards: [...newCards],
+        deck: [...newDeck]
+      };
+    }
+  } else {
+    return {};
+  }
+}
+
 /**
  * Permet de regenerer la dernière carte, c'est à dire
  * Modifier le deck en ajoutant 1 occurances à la dernière carte tirée
@@ -195,7 +222,11 @@ function initializeGameMode(gamemode, players) {
       isCardInGameMode(card, gamemode) && cleanPlayers.length >= card.nbPlayers
   );
   introCards.forEach(
-    (card, index) => (introCards[index] = proccessCard(card, cleanPlayers))
+    (card, index) =>
+      (introCards[index] = {
+        ...proccessCard(card, cleanPlayers),
+        introCard: true
+      })
   );
   let deck = createDeck(gamemode);
   while (introCards.length < 2) {
@@ -259,7 +290,6 @@ function proccessCardPlayers(card, players) {
       .join(playerSelected.player.name);
     playersAvailable.splice(playerSelected.index, 1);
     playerIndex++;
-    console.log(playersAvailable);
   }
   return newCard;
 }
