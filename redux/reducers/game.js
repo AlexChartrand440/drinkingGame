@@ -127,7 +127,6 @@ export const arePlayersNameCorrect = state =>
  * de changement dans les joueurs
  */
 function recalculateGameState(state, newPlayers) {
-  console.log(state);
   //Si un mode de jeu est selectionné et que la partie n'est pas fini
   if (state.gamemode && !isGameFinished({ game: { ...state } })) {
     //Si on est encore dans les cartes d'introduction, on redemarre la partie
@@ -302,7 +301,7 @@ function proccessCardNumber(card) {
   let numberIndex = 1;
   let getNumber = () => {
     let range = newCard.ranges[numberIndex - 1];
-    return Math.floor(Math.random() * range.max) + range.min;
+    return Math.floor(Math.random() * (range.max + 1 - range.min)) + range.min;
   };
   let needNumber = () => newCard.text.includes(number(numberIndex));
   while (needNumber()) {

@@ -1,7 +1,7 @@
 export const GameModeId = {
   ANY: "any",
   MAIN: "main",
-  B: "b"
+  HARDCORE: "Hardcore"
 };
 
 export default [
@@ -11,9 +11,9 @@ export default [
     description: "Mode de jeu classique, pas de bassine à prévoir"
   },
   {
-    id: GameModeId.B,
-    name: "Mode b",
+    id: GameModeId.HARDCORE,
+    name: "Boss de fin",
     description:
-      "Mode de jeu classique, pas de bassine à prévoir. Mode de jeu classique, pas de bassine à prévoir"
+      "Si vous ne buvez pas pour vous amuser, mais pour prouver qui à les plus grosses, ce mode est pour vous (Bassine à prévoir !)"
   }
 ];
