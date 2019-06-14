@@ -1,6 +1,7 @@
 import { GameModeId } from "./gameModes";
 const PLAYER = "#PLAYER";
 const NUMBER = "#NUMBER";
+export const WORD = "#WORD";
 
 export function player(index) {
   return PLAYER + index;
@@ -121,7 +122,7 @@ const defaultCard = [
     nbPlayers: 3,
     nbOccurences: 2,
     color: "#2ecc71",
-    gameMode: GameModeId.ANY
+    gameMode: [GameModeId.ANY]
   },
   {
     title: "Le comité des anciens nazis",
@@ -135,7 +136,7 @@ const defaultCard = [
     author: "Pierre",
     nbPlayers: 3,
     nbOccurences: 2,
-    gameMode: GameModeId.ANY
+    gameMode: [GameModeId.ANY]
   },
   {
     title: "La liaison covalente",
@@ -149,7 +150,7 @@ const defaultCard = [
     nbPlayers: 3,
     nbOccurence: 1,
     color: "#2980b9",
-    gameMode: GameModeId.ANY
+    gameMode: [GameModeId.ANY]
   },
   {
     title: "Le Mix'n'Twist",
@@ -163,7 +164,7 @@ const defaultCard = [
     nbPlayers: 2,
     nbOccurence: 2,
     color: "#2ecc71",
-    gameMode: GameModeId.ANY
+    gameMode: [GameModeId.ANY]
   },
   {
     title: "Le barman",
@@ -174,7 +175,7 @@ const defaultCard = [
     nbPlayers: 2,
     nbOccurences: 1,
     color: "#2980b9",
-    gameMode: GameModeId.ANY
+    gameMode: [GameModeId.ANY]
   },
   {
     title: "La réplique",
@@ -197,7 +198,7 @@ const defaultCard = [
     nbPlayers: 3,
     nbOccurences: 4,
     color: "#2ecc71",
-    gameMode: GameModeId.ANY
+    gameMode: [GameModeId.ANY]
   },
   {
     title: "Le roi des pouces",
@@ -209,7 +210,7 @@ const defaultCard = [
     nbPlayers: 2,
     nbOccurences: 2,
     color: "#2980b9",
-    gameMode: GameModeId.ANY
+    gameMode: [GameModeId.ANY]
   },
   {
     title: "Le mot le plus long",
@@ -229,7 +230,7 @@ const defaultCard = [
     nbPlayers: 2,
     nbOccurences: 2,
     color: "#2ecc71",
-    gameMode: GameModeId.ANY
+    gameMode: [GameModeId.ANY]
   },
   {
     title: "Le Mara(dic)thon",
@@ -250,7 +251,7 @@ const defaultCard = [
     nbPlayers: 2,
     nbOccurences: 2,
     color: "#2ecc71",
-    gameMode: GameModeId.ANY
+    gameMode: [GameModeId.ANY]
   },
   {
     title: "J'ai dis PUUUTEUH",
@@ -263,7 +264,7 @@ const defaultCard = [
     nbPlayers: 3,
     nbOccurences: 2,
     color: "#2980b9",
-    gameMode: GameModeId.ANY
+    gameMode: [GameModeId.ANY]
   },
   {
     title: "You're the best !",
@@ -276,7 +277,7 @@ const defaultCard = [
     nbPlayers: 3,
     nbOccurences: 2,
     color: "#2980b9",
-    gameMode: GameModeId.ANY
+    gameMode: [GameModeId.ANY]
   },
   {
     title: "Le pouvoir de l'ivresse",
@@ -296,7 +297,7 @@ const defaultCard = [
     nbPlayers: 2,
     nbOccurences: 4,
     color: "#f1c40f",
-    gameMode: GameModeId.ANY
+    gameMode: [GameModeId.ANY]
   },
   ,
   {
@@ -308,7 +309,7 @@ const defaultCard = [
     nbPlayers: 2,
     nbOccurences: 2,
     color: "#e67e22",
-    gameMode: GameModeId.ANY
+    gameMode: [GameModeId.ANY]
   },
   {
     title: "Bang Bang, you shot me down",
@@ -319,7 +320,7 @@ const defaultCard = [
     nbPlayers: 2,
     nbOccurences: 2,
     color: "#e67e22",
-    gameMode: GameModeId.ANY
+    gameMode: [GameModeId.ANY]
   },
   {
     title: "Les Pourparlers",
@@ -332,7 +333,7 @@ const defaultCard = [
     nbPlayers: 5,
     nbOccurences: 2,
     color: "#2ecc71",
-    gameMode: GameModeId.ANY
+    gameMode: [GameModeId.ANY]
   },
   {
     title: "Le Trader",
@@ -344,7 +345,7 @@ const defaultCard = [
     nbPlayers: 3,
     nbOccurences: 1,
     color: "#2ecc71",
-    gameMode: GameModeId.ANY
+    gameMode: [GameModeId.ANY]
   },
   {
     title: "Le chef d'orchestre",
@@ -361,20 +362,35 @@ const defaultCard = [
     nbPlayers: 2,
     nbOccurence: 4,
     color: "#2ecc71",
-    gameMode: GameModeId.ANY
+    gameMode: [GameModeId.ANY]
   },
   {
     title: "Le jeu des marques ou thèmes",
     text:
-      "Chaque joueur doit dire un mot en rapport avec la marque ou le thème choisi. Le jeu tourne dans le sens horaire. \n" +
+      "Chaque joueur doit dire un mot en rapport avec le thème : " +
+      WORD +
+      " . Le jeu tourne dans le sens horaire. \n" +
       "Le premier joueur qui ne trouve pas dans le temps imparti ou qui reprend un élément déjà dit boit 2 gorgées. \n" +
       player(1) +
-      " commence et choisit la marque ou le thème.",
+      " commence.",
     author: "Richard",
-    nbPlayers: 2,
+    nbPlayers: 3,
     nbOccurences: 4,
     color: "#2ecc71",
-    gameMode: GameModeId.ANY
+    gameMode: [GameModeId.ANY, GameModeId.TEST],
+    words: [
+      "Les marques de cigarettes",
+      "Les marques de sous-vêtement",
+      "Les marques d'ordinateur",
+      "Noms de jeux vidéos",
+      "Les marques de téléphone",
+      "Les clichés sur les parisiens",
+      "Les clichés sur les provinciaux",
+      "Les marques de voiture",
+      "Les marques de cosmetiques",
+      "Les marques de boisson alcoolisées",
+      "Les noms de médicaments"
+    ]
   },
   {
     title: "Le jeu des capitales",
@@ -386,7 +402,7 @@ const defaultCard = [
     nbPlayers: 2,
     nbOccurences: 3,
     color: "#2ecc71",
-    gameMode: GameModeId.ANY
+    gameMode: [GameModeId.ANY]
   },
   {
     title: "Joke d'alcolo",
@@ -409,7 +425,7 @@ const defaultCard = [
     nbPlayers: 2,
     nbOccurences: 2,
     color: "#2ecc71",
-    gameMode: GameModeId.ANY
+    gameMode: [GameModeId.ANY]
   },
   {
     title: "La salope ",
@@ -422,7 +438,7 @@ const defaultCard = [
     nbPlayers: 2,
     nbOccurences: 1,
     color: "#2980b9",
-    gameMode: GameModeId.ANY
+    gameMode: [GameModeId.ANY]
   },
   {
     title: "La reine des freeze",
@@ -434,21 +450,50 @@ const defaultCard = [
     nbPlayers: 3,
     nbOccurences: 3,
     color: "#2980b9",
-    gameMode: GameModeId.ANY
+    gameMode: [GameModeId.ANY]
   },
   {
     title: "Ma bite ma chatte",
     text:
+      "Chaque joueur doit dire un adjectif commençant par la lettre " +
+      WORD +
+      ', en commençant par "MA BITE EST" ou "MA CHATTE EST". \n' +
+      "Le premier joueur à répeter un adjectif déjà dit, ou n'ayant plus d'idée boit 2 gorgées. \n" +
       player(1) +
-      " récite l'alphabet dans sa tête. \n" +
-      "Lorsque le joueur à sa gauche lui dit stop, il annonce la lettre sur laquelle il était. \n" +
-      'Chaque joueur doit ensuite dire un adjectif commençant par la lettre annoncée, en commençant par "MA BITE EST" ou "MA CHATTE EST". \n' +
-      "Le premier joueur à répeter un adjectif déjà dit, ou n'ayant plus d'idée boit 2 gorgées.",
+      " commences.",
+    words: [
+      "A",
+      "B",
+      "C",
+      "D",
+      "E",
+      "F",
+      "G",
+      "H",
+      "I",
+      "J",
+      "K",
+      "L",
+      "M",
+      "N",
+      "O",
+      "P",
+      "Q",
+      "R",
+      "S",
+      "T",
+      "U",
+      "V",
+      "W",
+      "X",
+      "Y",
+      "Z"
+    ],
     author: "Jules",
     nbPlayers: 3,
     nbOccurences: 3,
     color: "#2ecc71",
-    gameMode: GameModeId.ANY
+    gameMode: [GameModeId.ANY]
   },
   {
     title: "L'amour fou",
@@ -463,7 +508,7 @@ const defaultCard = [
     nbPlayers: 3,
     nbOccurences: 1,
     color: "#2980b9",
-    gameMode: GameModeId.ANY
+    gameMode: [GameModeId.ANY]
   },
   {
     title: "Le fan",
@@ -476,7 +521,7 @@ const defaultCard = [
     nbPlayers: 3,
     nbOccurences: 2,
     color: "#2980b9",
-    gameMode: GameModeId.ANY
+    gameMode: [GameModeId.ANY]
   },
   {
     title: "I'm a Wild Men",
@@ -491,7 +536,7 @@ const defaultCard = [
     nbPlayers: 2,
     nbOccurences: 2,
     color: "#2ecc71",
-    gameMode: GameModeId.ANY
+    gameMode: [GameModeId.ANY]
   },
   {
     title: "You're the luckyone",
@@ -502,7 +547,7 @@ const defaultCard = [
     nbPlayers: 2,
     nbOccurences: 2,
     color: "#1abc9c",
-    gameMode: GameModeId.ANY
+    gameMode: [GameModeId.ANY]
   },
   {
     title: "Action/Vérité",
@@ -515,7 +560,7 @@ const defaultCard = [
     author: "Ugo",
     nbPlayers: 2,
     nbOccurences: 1,
-    gameMode: GameModeId.ANY
+    gameMode: [GameModeId.ANY]
   },
   {
     title: "Le suceur",
@@ -528,7 +573,7 @@ const defaultCard = [
     nbPlayers: 3,
     nbOccurences: 2,
     color: "#2980b9",
-    gameMode: GameModeId.ANY
+    gameMode: [GameModeId.ANY]
   },
   {
     title: "Jeu de la chanson",
@@ -543,21 +588,7 @@ const defaultCard = [
     nbPlayers: 2,
     nbOccurences: 2,
     color: "#2ecc71",
-    gameMode: GameModeId.ANY
-  },
-  {
-    title: "Marque ou thème ",
-    text:
-      "Chaque joueur à tour de rôle doit dire un mot en rapport avec le thème choisi par " +
-      player(1) +
-      ". Le joueur qui ne trouve pas ou se trompe boit 3 gorgées. \n" +
-      player(1) +
-      "commence.",
-    author: "Silab",
-    nbPlayers: 2,
-    nbOccurences: 2,
-    color: "#2ecc71",
-    gameMode: GameModeId.ANY
+    gameMode: [GameModeId.ANY]
   },
   {
     title: "L'ostracisme",
@@ -570,7 +601,7 @@ const defaultCard = [
     nbPlayers: 2,
     nbOccurence: 1,
     color: "#2ecc71",
-    gameMode: GameModeId.ANY
+    gameMode: [GameModeId.ANY]
   }
 ];
 const hardcoreCards = [

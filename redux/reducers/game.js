@@ -10,11 +10,12 @@ import {
 import CardDeck, {
   introductionCards,
   endCard,
-  PLAYER,
+  WORD,
   player,
   number
 } from "../../ressources/cards";
 import { GameModeId } from "../../ressources/gameModes";
+import { nbCardsMax } from "../../constants/Game";
 
 const initialState = {
   cards: [],
@@ -50,7 +51,11 @@ export default function game(state = initialState, action) {
         state.cards[newCurrentCard].title !== endCard.title
       ) {
         /** On prépare une nouvelle carte */
-        let { nextCard, newDeck } = generateNextCard(state.players, state.deck);
+        let { nextCard, newDeck } = generateNextCard(
+          state.players,
+          state.deck,
+          state.cards
+        );
         return {
           ...state,
           currentCardIndex: newCurrentCard,
@@ -171,10 +176,9 @@ function regenerateLastCard(players, deck, cards) {
   let lastCardIndexInDeck = newDeck.findIndex(
     card => card.title === lastCard.title
   );
-  //FIXME : Ne fonctionne pas si la dernière carte du paquet est une carte d'introduction
   newDeck[lastCardIndexInDeck].nbOccurences++;
 
-  return generateNextCard(players, deck);
+  return generateNextCard(players, deck, cards);
 }
 /**
  * Génére une nouvelle carte tirée dans le deck, crée en fonction des joueurus
@@ -182,14 +186,14 @@ function regenerateLastCard(players, deck, cards) {
  * @param {*} players
  * @param {*} deck
  */
-function generateNextCard(players, deck) {
+function generateNextCard(players, deck, cards) {
   let newDeck = [...deck];
   let cleanPlayers = removeEmptyPlayers(players);
   let possibleCards = newDeck.filter(
     card => card.nbPlayers <= cleanPlayers.length && card.nbOccurences > 0
   );
   let nextCard;
-  if (possibleCards.length > 0) {
+  if (possibleCards.length > 0 && cards.length < nbCardsMax) {
     let indexOfSelectedCard = Math.floor(Math.random() * possibleCards.length);
     nextCard = proccessCard(possibleCards[indexOfSelectedCard], cleanPlayers);
     let indexInDeck = newDeck.findIndex(card => nextCard.title === card.title);
@@ -229,7 +233,7 @@ function initializeGameMode(gamemode, players) {
   );
   let deck = createDeck(gamemode);
   while (introCards.length < 2) {
-    let result = generateNextCard(cleanPlayers, deck);
+    let result = generateNextCard(cleanPlayers, deck, introCards);
     deck = result.newDeck;
     introCards.push(result.nextCard);
   }
@@ -265,6 +269,7 @@ function isCardInGameMode(card, gamemode) {
 function proccessCard(card, players) {
   let newCard = proccessCardPlayers(card, players);
   newCard = proccessCardNumber(newCard);
+  newCard = proccessCardWords(newCard);
   return newCard;
 }
 
@@ -309,6 +314,19 @@ function proccessCardNumber(card) {
     numberIndex++;
   }
 
+  return newCard;
+}
+
+function proccessCardWords(card) {
+  let newCard = { ...card };
+  if (
+    newCard.words &&
+    newCard.words.length > 0 &&
+    newCard.text.includes(WORD)
+  ) {
+    let index = Math.floor(Math.random() * newCard.words.length);
+    newCard.text = newCard.text.split(WORD).join(newCard.words[index]);
+  }
   return newCard;
 }
 
