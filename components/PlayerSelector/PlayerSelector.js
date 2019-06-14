@@ -90,7 +90,7 @@ export default class PlayerSelector extends React.Component {
           <Button
             onPress={() => onGoToModeSelection()}
             title="Selectionner un mode de jeu"
-            color={Colors.tabIconSelected}
+            color={Colors.mainColorButton}
             accessibilityLabel="Selectionner un mode de jeu"
           />
         )}

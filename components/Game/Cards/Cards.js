@@ -1,7 +1,6 @@
 import React, { PureComponent } from "react";
 
 import { View, Text, StyleSheet, Dimensions } from "react-native";
-import Styles from "../../../constants/Styles";
 import { FlatList } from "react-native-gesture-handler";
 
 const { width, height } = Dimensions.get("window");

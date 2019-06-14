@@ -1,4 +1,5 @@
-import React, { PureComponent } from "react";
+import React from "react";
+import Card from "./Card/Card";
 
 import {
   View,
@@ -8,9 +9,6 @@ import {
   TouchableHighlight
 } from "react-native";
 import { Icon } from "expo";
-
-const { width, height } = Dimensions.get("window");
-var deviceWidth = width > height ? width : height;
 
 export default class ModeSelector extends React.Component {
   static navigationOptions = {
@@ -23,25 +21,33 @@ export default class ModeSelector extends React.Component {
       currentCardIndex,
       onPressBack,
       onPressNextCard,
-      isEndCardSelected
+      isEndCardSelected,
+      isFirstCardSelected
     } = this.props;
     return (
-      <View style={styles.container}>
-        <TouchableHighlight
-          style={styles.leftArrow}
-          onPress={() => {
-            onPressBack();
-          }}
-          underlayColor={"rgba(255,255,255,0.2)"}
-        >
-          <Icon.Ionicons
-            name={"md-arrow-back"}
-            size={45}
-            color={"black"}
-            alt={"Carte précédente"}
-            style={{ opacity: 1 }}
-          />
-        </TouchableHighlight>
+      <View
+        style={{
+          ...styles.container,
+          backgroundColor: cards[currentCardIndex].color
+        }}
+      >
+        {!isFirstCardSelected && (
+          <TouchableHighlight
+            style={styles.leftArrow}
+            onPress={() => {
+              onPressBack();
+            }}
+            underlayColor={"rgba(255,255,255,0.2)"}
+          >
+            <Icon.Ionicons
+              name={"md-arrow-back"}
+              size={45}
+              color={"black"}
+              alt={"Carte précédente"}
+              style={{ opacity: 1 }}
+            />
+          </TouchableHighlight>
+        )}
         <TouchableHighlight
           style={styles.container}
           onPress={() => {
@@ -49,22 +55,8 @@ export default class ModeSelector extends React.Component {
           }}
           underlayColor={"transparent"}
         >
-          <Card
-            text={cards[currentCardIndex].text}
-            title={cards[currentCardIndex].title}
-          />
+          <Card {...cards[currentCardIndex]} />
         </TouchableHighlight>
-      </View>
-    );
-  }
-}
-
-class Card extends PureComponent {
-  render() {
-    return (
-      <View style={styles.cardView}>
-        <Text style={styles.cardTitle}>{this.props.title}</Text>
-        <Text style={styles.cardText}>{this.props.text}</Text>
       </View>
     );
   }
@@ -76,8 +68,7 @@ const styles = StyleSheet.create({
     top: 0,
     bottom: 0,
     left: 0,
-    right: 0,
-    backgroundColor: "#F44336"
+    right: 0
   },
   leftArrow: {
     position: "absolute",
@@ -88,21 +79,5 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     paddingLeft: 10,
     paddingRight: 10
-  },
-  cardView: {
-    width: deviceWidth,
-    height: "100%",
-    flexDirection: "column",
-    padding: 30
-  },
-  cardText: {
-    fontSize: 18,
-    textAlign: "center",
-    padding: 30
-  },
-  cardTitle: {
-    fontSize: 26,
-    textAlign: "center",
-    marginBottom: 30
   }
 });

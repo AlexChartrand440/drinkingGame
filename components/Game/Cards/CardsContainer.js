@@ -8,14 +8,16 @@ import Cards from "./CardsClique";
 import {
   getCards,
   getCurrentCardIndex,
-  isEndCardSelected
+  isEndCardSelected,
+  isFirstCardSelected
 } from "../../../redux/reducers/game";
 
 const mapStateToProps = state => {
   return {
     cards: getCards(state),
     currentCardIndex: getCurrentCardIndex(state),
-    isEndCardSelected: isEndCardSelected(state)
+    isEndCardSelected: isEndCardSelected(state),
+    isFirstCardSelected: isFirstCardSelected(state)
   };
 };
 const mapDispatchToProps = dispatch => {

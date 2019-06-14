@@ -10,7 +10,9 @@ import {
 import CardDeck, {
   introductionCards,
   endCard,
-  PLAYER
+  PLAYER,
+  player,
+  number
 } from "../../ressources/cards";
 import { GameModeId } from "../../ressources/gameModes";
 
@@ -81,11 +83,13 @@ export default function game(state = initialState, action) {
     case DELETE_PLAYER:
       let newPlayers = [...state.players];
       newPlayers.splice(action.index, 1);
+      newPlayers = controlAllPlayer(newPlayers);
       return { ...state, players: newPlayers };
     case SET_PLAYER_NAME: {
       let newPlayers = [...state.players];
       newPlayers[action.index] = { name: action.name, errors: action.errors };
-      if (state.gamemode) {
+      newPlayers = controlAllPlayer(newPlayers);
+      if (state.gamemode && !isGameFinished({ game: { ...state } })) {
         let newCards = [...state.cards];
         let { nextCard, newDeck } = regenerateLastCard(
           newPlayers,
@@ -119,6 +123,7 @@ export const isGameFinished = state =>
   state.game.cards[state.game.cards.length - 1].title === endCard.title;
 export const isEndCardSelected = state =>
   state.game.cards[state.game.currentCardIndex].title === endCard.title;
+export const isFirstCardSelected = state => state.game.currentCardIndex === 0;
 /** Player */
 export const getPlayers = state => state.game.players;
 export const hasPlayer = state =>
@@ -140,6 +145,7 @@ function regenerateLastCard(players, deck, cards) {
   let lastCardIndexInDeck = newDeck.findIndex(
     card => card.title === lastCard.title
   );
+  //FIXME : Ne fonctionne pas si la dernière carte du paquet est une carte d'introduction
   newDeck[lastCardIndexInDeck].nbOccurences++;
 
   return generateNextCard(players, deck);
@@ -152,13 +158,14 @@ function regenerateLastCard(players, deck, cards) {
  */
 function generateNextCard(players, deck) {
   let newDeck = [...deck];
+  let cleanPlayers = removeEmptyPlayers(players);
   let possibleCards = newDeck.filter(
-    card => card.nbPlayers <= players.length && card.nbOccurences > 0
+    card => card.nbPlayers <= cleanPlayers.length && card.nbOccurences > 0
   );
   let nextCard;
   if (possibleCards.length > 0) {
     let indexOfSelectedCard = Math.floor(Math.random() * possibleCards.length);
-    nextCard = proccessCard(possibleCards[indexOfSelectedCard], players);
+    nextCard = proccessCard(possibleCards[indexOfSelectedCard], cleanPlayers);
     let indexInDeck = newDeck.findIndex(card => nextCard.title === card.title);
     let cardInDeck = newDeck[indexInDeck];
     let newNbOccurences = cardInDeck.nbOccurences - 1;
@@ -182,12 +189,17 @@ function generateNextCard(players, deck) {
  * @param {*} players
  */
 function initializeGameMode(gamemode, players) {
-  let introCards = introductionCards.filter(card =>
-    isCardInGameMode(card, gamemode)
+  let cleanPlayers = removeEmptyPlayers(players);
+  let introCards = introductionCards.filter(
+    card =>
+      isCardInGameMode(card, gamemode) && cleanPlayers.length >= card.nbPlayers
+  );
+  introCards.forEach(
+    (card, index) => (introCards[index] = proccessCard(card, cleanPlayers))
   );
   let deck = createDeck(gamemode);
   while (introCards.length < 2) {
-    let result = generateNextCard(players, deck);
+    let result = generateNextCard(cleanPlayers, deck);
     deck = result.newDeck;
     introCards.push(result.nextCard);
   }
@@ -221,22 +233,112 @@ function isCardInGameMode(card, gamemode) {
  * les variables contenues dans son texte son alimenté
  */
 function proccessCard(card, players) {
+  let newCard = proccessCardPlayers(card, players);
+  newCard = proccessCardNumber(newCard);
+  return newCard;
+}
+
+/**
+ * Fonction permettant de retourner une carte où
+ * les variables de joueur contenue dans son texte son alimenté
+ */
+function proccessCardPlayers(card, players) {
   let newCard = { ...card };
-  let playersAvailable = [...players];
-  let playerNumber = 1;
+  let playersAvailable = [...removeEmptyPlayers(players)];
+  let playerIndex = 1;
   let selectPlayer = () => {
     let index = Math.floor(Math.random() * playersAvailable.length);
     return { index, player: playersAvailable[index] };
   };
-  let needPlayer = () => newCard.text.includes(PLAYER + playerNumber);
+  let needPlayer = () => newCard.text.includes(player(playerIndex));
   let playerSelected;
   while (playersAvailable.length > 0 && needPlayer()) {
     playerSelected = selectPlayer();
     newCard.text = newCard.text
-      .split(PLAYER + playerNumber)
+      .split(player(playerIndex))
       .join(playerSelected.player.name);
-    playersAvailable.splice(playerSelected.index);
-    playerNumber++;
+    playersAvailable.splice(playerSelected.index, 1);
+    playerIndex++;
+    console.log(playersAvailable);
   }
   return newCard;
+}
+/**
+ * Fonction permettant de retourner une carte où
+ * les variables de nombre aléatoire contenue dans son texte son alimenté
+ */
+function proccessCardNumber(card) {
+  let newCard = { ...card };
+  let numberIndex = 1;
+  let getNumber = () => {
+    let range = newCard.ranges[numberIndex - 1];
+    return Math.floor(Math.random() * range.max) + range.min;
+  };
+  let needNumber = () => newCard.text.includes(number(numberIndex));
+  while (needNumber()) {
+    newCard.text = newCard.text.split(number(numberIndex)).join(getNumber());
+    numberIndex++;
+  }
+
+  return newCard;
+}
+
+/**
+ * Retourne la liste des joueurs comportant un nom
+ * @param {*} players
+ */
+function removeEmptyPlayers(players) {
+  return [
+    ...players.filter(player => {
+      return player.name.length > 0;
+    })
+  ];
+}
+
+/**
+ * Controle la liste des joueurs
+ */
+
+function controlAllPlayer(players) {
+  let newPlayers = [...players];
+  newPlayers.reduce((accumulateur, valeurCourante, index) => {
+    let player = controlePlayerName(valeurCourante.name);
+    let newAccumulateur;
+    if (accumulateur.includes(player.newName)) {
+      player.errors = [
+        ...player.errors,
+        "Deux joueurs ne peuvent pas avoir le même nom"
+      ];
+      newAccumulateur = [...accumulateur];
+    } else {
+      newAccumulateur = [...accumulateur, player.newName];
+    }
+    newPlayers[index] = {
+      ...valeurCourante,
+      name: player.newName,
+      errors: player.errors
+    };
+    return newAccumulateur;
+  }, []);
+  return newPlayers;
+}
+
+/**
+ * Contrôle le nom d'un joueur
+ * @param {*} name
+ */
+function controlePlayerName(name) {
+  let newName = name.trim();
+  let format = /[!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?]/;
+  if (!(newName.length < 1)) {
+    //Si des caractères spéciaux sont présents
+    if (format.test(newName)) {
+      return {
+        newName,
+        errors: ["Le nom d'un joueur ne peux pas contenir de caractère special"]
+      };
+    }
+  }
+
+  return { newName, errors: [] };
 }
