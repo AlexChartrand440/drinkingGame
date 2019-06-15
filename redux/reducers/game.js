@@ -47,7 +47,7 @@ export default function game(state = initialState, action) {
       let newCurrentCard = state.currentCardIndex + 1;
       /** Si cette carte est l'avance dernière des cartes déjà prête */
       if (
-        newCurrentCard >= state.cards.length - 2 &&
+        newCurrentCard >= state.cards.length - 1 &&
         state.cards[newCurrentCard].title !== endCard.title
       ) {
         /** On prépare une nouvelle carte */
@@ -59,7 +59,7 @@ export default function game(state = initialState, action) {
         return {
           ...state,
           currentCardIndex: newCurrentCard,
-          cards: [...state.cards, { ...nextCard }],
+          cards: [...state.cards, ...nextCard],
           deck: [...newDeck]
         };
       } else {
@@ -173,6 +173,10 @@ function regenerateLastCard(players, deck, cards) {
   let newCards = [...cards];
   let newDeck = [...deck];
   let lastCard = newCards[newCards.length - 1];
+  // Si la dernière carte générée est une followingCard, on ne regenère rien
+  if (lastCard.isFollowingCard) {
+    return { nextCard: lastCard, newDeck };
+  }
   let lastCardIndexInDeck = newDeck.findIndex(
     card => card.title === lastCard.title
   );
@@ -196,7 +200,9 @@ function generateNextCard(players, deck, cards) {
   if (possibleCards.length > 0 && cards.length < nbCardsMax) {
     let indexOfSelectedCard = Math.floor(Math.random() * possibleCards.length);
     nextCard = proccessCard(possibleCards[indexOfSelectedCard], cleanPlayers);
-    let indexInDeck = newDeck.findIndex(card => nextCard.title === card.title);
+    let indexInDeck = newDeck.findIndex(
+      card => nextCard[0].title === card.title
+    );
     let cardInDeck = newDeck[indexInDeck];
     let newNbOccurences = cardInDeck.nbOccurences - 1;
     newDeck[indexInDeck] = {
@@ -204,7 +210,7 @@ function generateNextCard(players, deck, cards) {
       nbOccurences: newNbOccurences
     };
   } else {
-    nextCard = endCard;
+    nextCard = [endCard];
   }
   return { nextCard, newDeck };
 }
@@ -224,20 +230,22 @@ function initializeGameMode(gamemode, players) {
     card =>
       isCardInGameMode(card, gamemode) && cleanPlayers.length >= card.nbPlayers
   );
-  introCards.forEach(
-    (card, index) =>
-      (introCards[index] = {
-        ...proccessCard(card, cleanPlayers),
-        introCard: true
-      })
-  );
+  let proccessedIntroCards = [];
+  introCards.forEach(card => {
+    proccessCard(card, cleanPlayers).map(nCard => {
+      proccessedIntroCards.push(nCard);
+    });
+  });
+
   let deck = createDeck(gamemode);
-  while (introCards.length < 2) {
-    let result = generateNextCard(cleanPlayers, deck, introCards);
+  while (proccessedIntroCards.length < 2) {
+    let result = generateNextCard(cleanPlayers, deck, proccessedIntroCards);
     deck = result.newDeck;
-    introCards.push(result.nextCard);
+    result.nextCard.map(nCard => {
+      proccessedIntroCards.push(nCard);
+    });
   }
-  return { introCards, deck };
+  return { introCards: proccessedIntroCards, deck };
 }
 
 /**
@@ -265,12 +273,18 @@ function isCardInGameMode(card, gamemode) {
 /**
  * Fonction permettant de retourner une carte où
  * les variables contenues dans son texte son alimenté
+ * Il est possible de retourner plusieurs carte, si la carte calculée
+ * possèdes une carte suivante obligatoire
  */
 function proccessCard(card, players) {
   let newCard = proccessCardPlayers(card, players);
   newCard = proccessCardNumber(newCard);
   newCard = proccessCardWords(newCard);
-  return newCard;
+  if (newCard.followingCard) {
+    return [newCard, { ...newCard.followingCard, isFollowingCard: true }];
+  } else {
+    return [newCard];
+  }
 }
 
 /**
@@ -279,22 +293,37 @@ function proccessCard(card, players) {
  */
 function proccessCardPlayers(card, players) {
   let newCard = { ...card };
+  let followingCard = newCard.followingCard
+    ? { ...newCard.followingCard }
+    : null;
   let playersAvailable = [...removeEmptyPlayers(players)];
   let playerIndex = 1;
   let selectPlayer = () => {
     let index = Math.floor(Math.random() * playersAvailable.length);
     return { index, player: playersAvailable[index] };
   };
-  let needPlayer = () => newCard.text.includes(player(playerIndex));
+  let needPlayer = () =>
+    newCard.text.includes(player(playerIndex)) ||
+    (followingCard && followingCard.text.includes(player(playerIndex)));
   let playerSelected;
   while (playersAvailable.length > 0 && needPlayer()) {
     playerSelected = selectPlayer();
     newCard.text = newCard.text
       .split(player(playerIndex))
       .join(playerSelected.player.name);
+    if (followingCard) {
+      followingCard.text = followingCard.text
+        .split(player(playerIndex))
+        .join(playerSelected.player.name);
+    }
     playersAvailable.splice(playerSelected.index, 1);
     playerIndex++;
   }
+
+  if (followingCard) {
+    newCard.followingCard = followingCard;
+  }
+
   return newCard;
 }
 /**

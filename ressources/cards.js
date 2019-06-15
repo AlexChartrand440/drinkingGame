@@ -264,20 +264,17 @@ const defaultCard = [
     nbPlayers: 3,
     nbOccurences: 2,
     color: "#2980b9",
-    gameMode: [GameModeId.ANY]
-  },
-  {
-    title: "You're the best !",
-    text:
-      player(1) +
-      " est le mac. \n" +
-      "Lorsqu'il reçoit une gorgée, il peut les donner à sa pute (Mais il doit toujours lui en rester au moins une). \n " +
-      "S'il n'a pas encore de pute, soit patient !",
-    author: "Etienne",
-    nbPlayers: 3,
-    nbOccurences: 2,
-    color: "#2980b9",
-    gameMode: [GameModeId.ANY]
+    gameMode: [GameModeId.ANY],
+    followingCard: {
+      title: "You're the best !",
+      text:
+        player(2) +
+        " est le mac. \n" +
+        "Lorsqu'il reçoit une gorgée, il peut les donner à sa pute (Mais il doit toujours lui en rester au moins une). \n " +
+        "S'il n'a pas encore de pute, soit patient !",
+      author: "Etienne",
+      color: "#2980b9"
+    }
   },
   {
     title: "Le pouvoir de l'ivresse",
