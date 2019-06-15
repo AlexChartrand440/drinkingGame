@@ -148,7 +148,7 @@ const defaultCard = [
       " S'ils ne le finissent pas à temps, ils prennent un shot chacun.",
     author: "Pierre",
     nbPlayers: 3,
-    nbOccurence: 1,
+    nbOccurences: 1,
     color: "#2980b9",
     gameMode: [GameModeId.ANY]
   },
@@ -162,7 +162,7 @@ const defaultCard = [
       "commence.",
     author: "Pierre",
     nbPlayers: 2,
-    nbOccurence: 2,
+    nbOccurences: 2,
     color: "#2ecc71",
     gameMode: [GameModeId.ANY]
   },
@@ -357,7 +357,7 @@ const defaultCard = [
       " pendant le temps du mime)",
     author: "Pierre",
     nbPlayers: 2,
-    nbOccurence: 4,
+    nbOccurences: 4,
     color: "#2ecc71",
     gameMode: [GameModeId.ANY]
   },
@@ -596,9 +596,18 @@ const defaultCard = [
       "Si il venait à prendre la parole sans en avoir le droit il devra prendre 2 gorgées par intenvention non autorisée.",
     author: "Silab",
     nbPlayers: 2,
-    nbOccurence: 1,
+    nbOccurences: 1,
     color: "#2ecc71",
-    gameMode: [GameModeId.ANY]
+    gameMode: [GameModeId.ANY],
+    followingCard: {
+      title: "L'ostracisme fin",
+      text:
+        player(1) +
+        " peux désormais parler même si aucune question ne lui à été posé",
+      drawDelay: 5,
+      author: "Etienne",
+      color: "#2980b9"
+    }
   }
 ];
 const hardcoreCards = [

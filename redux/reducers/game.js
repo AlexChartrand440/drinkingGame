@@ -19,6 +19,7 @@ import { nbCardsMax } from "../../constants/Game";
 
 const initialState = {
   cards: [],
+  upcomingCards: [],
   players: [{ name: "", errors: [] }],
   currentCardIndex: 0
 };
@@ -28,20 +29,20 @@ export default function game(state = initialState, action) {
   switch (action.type) {
     /** GameMode */
     case SELECT_GAMEMODE:
-      let { introCards, deck } = initializeGameMode(
+      let { introCards, deck, upcomingCards } = initializeGameMode(
         action.gamemode,
         state.players
       );
+
       return {
         ...state,
         gamemode: action.gamemode,
         cards: [...introCards],
         deck: [...deck],
-        currentCardIndex: initialState.currentCardIndex
+        currentCardIndex: initialState.currentCardIndex,
+        upcomingCards
       };
     /** Cards */
-    case ADD_CARD:
-      return { ...state, cards: [...state.cards, action.card] };
     case INCREMENT_CURRENT_CARD:
       /** Lorsqu'on se deplace sur la carte suivante */
       let newCurrentCard = state.currentCardIndex + 1;
@@ -51,16 +52,18 @@ export default function game(state = initialState, action) {
         state.cards[newCurrentCard].title !== endCard.title
       ) {
         /** On prépare une nouvelle carte */
-        let { nextCard, newDeck } = generateNextCard(
+        let { nextCard, newDeck, newUpcominCards } = generateNextCard(
           state.players,
           state.deck,
-          state.cards
+          state.cards,
+          state.upcomingCards
         );
         return {
           ...state,
           currentCardIndex: newCurrentCard,
-          cards: [...state.cards, ...nextCard],
-          deck: [...newDeck]
+          cards: [...state.cards, { ...nextCard }],
+          deck: [...newDeck],
+          upcomingCards: [...newUpcominCards]
         };
       } else {
         /** Sinon, on indique simplement qu'on est sur la carte suivante */
@@ -136,24 +139,30 @@ function recalculateGameState(state, newPlayers) {
   if (state.gamemode && !isGameFinished({ game: { ...state } })) {
     //Si on est encore dans les cartes d'introduction, on redemarre la partie
     if (isInIntroduction({ game: { ...state } })) {
-      let { introCards, deck } = initializeGameMode(state.gamemode, newPlayers);
+      let { introCards, deck, newUpcominCards } = initializeGameMode(
+        state.gamemode,
+        newPlayers
+      );
       return {
         cards: [...introCards],
         deck: [...deck],
-        currentCardIndex: initialState.currentCardIndex
+        currentCardIndex: initialState.currentCardIndex,
+        upcomingCards: [...newUpcominCards]
       };
       //Sinon on regenère seulement la dernière carte
     } else {
       let newCards = [...state.cards];
-      let { nextCard, newDeck } = regenerateLastCard(
+      let { nextCard, newDeck, newUpcominCards } = regenerateLastCard(
         newPlayers,
         state.deck,
-        newCards
+        newCards,
+        state.upcomingCards
       );
       newCards.splice(newCards.length - 1, 1, nextCard);
       return {
         cards: [...newCards],
-        deck: [...newDeck]
+        deck: [...newDeck],
+        upcomingCards: [...newUpcominCards]
       };
     }
   } else {
@@ -169,7 +178,7 @@ function recalculateGameState(state, newPlayers) {
  * @param {*} deck
  * @param {*} cards
  */
-function regenerateLastCard(players, deck, cards) {
+function regenerateLastCard(players, deck, cards, upcomingCards) {
   let newCards = [...cards];
   let newDeck = [...deck];
   let lastCard = newCards[newCards.length - 1];
@@ -182,7 +191,7 @@ function regenerateLastCard(players, deck, cards) {
   );
   newDeck[lastCardIndexInDeck].nbOccurences++;
 
-  return generateNextCard(players, deck, cards);
+  return generateNextCard(players, deck, cards, upcomingCards);
 }
 /**
  * Génére une nouvelle carte tirée dans le deck, crée en fonction des joueurus
@@ -190,29 +199,66 @@ function regenerateLastCard(players, deck, cards) {
  * @param {*} players
  * @param {*} deck
  */
-function generateNextCard(players, deck, cards) {
+function generateNextCard(players, deck, cards, upcomingCards) {
   let newDeck = [...deck];
   let cleanPlayers = removeEmptyPlayers(players);
   let possibleCards = newDeck.filter(
     card => card.nbPlayers <= cleanPlayers.length && card.nbOccurences > 0
   );
-  let nextCard;
-  if (possibleCards.length > 0 && cards.length < nbCardsMax) {
-    let indexOfSelectedCard = Math.floor(Math.random() * possibleCards.length);
-    nextCard = proccessCard(possibleCards[indexOfSelectedCard], cleanPlayers);
-    let indexInDeck = newDeck.findIndex(
-      card => nextCard[0].title === card.title
-    );
-    let cardInDeck = newDeck[indexInDeck];
-    let newNbOccurences = cardInDeck.nbOccurences - 1;
-    newDeck[indexInDeck] = {
-      ...newDeck[indexInDeck],
-      nbOccurences: newNbOccurences
+  let newCard;
+  let followingCard;
+  let newUpcominCards = [...upcomingCards];
+  if (newUpcominCards.length > 0) {
+    let upcomingIndex = newUpcominCards.findIndex(upcomingCard => {
+      return upcomingCard.indexToBeDrawn < cards.length;
+    });
+    if (upcomingIndex >= 0) {
+      newCard = newUpcominCards[upcomingIndex];
+      newUpcominCards.splice(upcomingIndex, 1);
+    }
+  }
+
+  if (!newCard) {
+    if (possibleCards.length > 0 && cards.length < nbCardsMax) {
+      let indexOfSelectedCard = Math.floor(
+        Math.random() * possibleCards.length
+      );
+      let proccessedCard = proccessCard(
+        possibleCards[indexOfSelectedCard],
+        cleanPlayers
+      );
+      newCard = proccessedCard.newCard;
+      followingCard = proccessedCard.followingCard;
+
+      let indexInDeck = newDeck.findIndex(card => newCard.title === card.title);
+      let cardInDeck = newDeck[indexInDeck];
+      let newNbOccurences = cardInDeck.nbOccurences - 1;
+      newDeck[indexInDeck] = {
+        ...newDeck[indexInDeck],
+        nbOccurences: newNbOccurences
+      };
+    } else {
+      newCard = endCard;
+    }
+  }
+
+  if (followingCard) {
+    newUpcominCards.push(generateUpcommingCard(followingCard, cards));
+  }
+  return { nextCard: newCard, newDeck, newUpcominCards };
+}
+
+function generateUpcommingCard(followingCard, cards) {
+  if (followingCard) {
+    return {
+      ...followingCard,
+      indexToBeDrawn: followingCard.drawDelay
+        ? cards.length + followingCard.drawDelay
+        : cards.length
     };
   } else {
-    nextCard = [endCard];
+    return {};
   }
-  return { nextCard, newDeck };
 }
 
 /**
@@ -232,20 +278,27 @@ function initializeGameMode(gamemode, players) {
   );
   let proccessedIntroCards = [];
   introCards.forEach(card => {
-    proccessCard(card, cleanPlayers).map(nCard => {
-      proccessedIntroCards.push(nCard);
-    });
+    proccessedIntroCards.push(proccessCard(card, cleanPlayers).newCard);
   });
 
   let deck = createDeck(gamemode);
+  let upcomingCards = initialState.upcomingCards;
   while (proccessedIntroCards.length < 2) {
-    let result = generateNextCard(cleanPlayers, deck, proccessedIntroCards);
+    let result = generateNextCard(
+      cleanPlayers,
+      deck,
+      proccessedIntroCards,
+      upcomingCards
+    );
     deck = result.newDeck;
-    result.nextCard.map(nCard => {
-      proccessedIntroCards.push(nCard);
-    });
+    upcomingCards = result.newUpcominCards;
+    proccessedIntroCards.push(result.nextCard);
   }
-  return { introCards: proccessedIntroCards, deck };
+  return {
+    introCards: proccessedIntroCards,
+    deck,
+    upcomingCards: [...upcomingCards]
+  };
 }
 
 /**
@@ -281,9 +334,12 @@ function proccessCard(card, players) {
   newCard = proccessCardNumber(newCard);
   newCard = proccessCardWords(newCard);
   if (newCard.followingCard) {
-    return [newCard, { ...newCard.followingCard, isFollowingCard: true }];
+    return {
+      newCard,
+      followingCard: { ...newCard.followingCard, isFollowingCard: true }
+    };
   } else {
-    return [newCard];
+    return { newCard };
   }
 }
 
