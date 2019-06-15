@@ -21,7 +21,8 @@
       "supportsTablet": true
     },
     "android": {
-      "package": "com.julesgrateau.alcolol"
+      "package": "com.julesgrateau.alcolol",
+      "permissions": []
     }
   }
 }
