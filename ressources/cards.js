@@ -75,7 +75,7 @@ const defaultCard = [
     title: "Le Bad Plot",
     text:
       player(1) +
-      "doit raconter un scénario de film le plus mal possible (tout en ne disant que des choses vraies) pendant 1 minutes. \n" +
+      " doit raconter un scénario de film le plus mal possible (tout en ne disant que des choses vraies) pendant 1 minutes. \n" +
       "Si personne ne trouve, tout le monde boit une gorgée sauf " +
       player(1) +
       "\n" +
@@ -108,21 +108,7 @@ const defaultCard = [
       }
     ],
     color: "#2ecc71",
-    gameMode: [GameModeId.ANY]
-  },
-  {
-    title: "Le shot-fu-mi",
-    text:
-      player(1) +
-      " et " +
-      player(2) +
-      " doivent faire un shifumi et designer d'avance le gagnant. \n" +
-      "Si le résultat est le bon, ils distribuent chacun un shot à la personne de leur choix. S'ils perdent ils prennent un shot chacun.",
-    author: "Pierre",
-    nbPlayers: 3,
-    nbOccurences: 2,
-    color: "#2ecc71",
-    gameMode: [GameModeId.ANY]
+    gameMode: [GameModeId.MAIN]
   },
   {
     title: "Le comité des anciens nazis",
@@ -139,42 +125,17 @@ const defaultCard = [
     gameMode: [GameModeId.ANY]
   },
   {
-    title: "La liaison covalente",
-    text:
-      player(1) +
-      " et " +
-      player(2) +
-      " partagent maintenant des électrons. Ils doivent se servir un verre commun et le finir avant un de leur verres respectifs. \n" +
-      " S'ils ne le finissent pas à temps, ils prennent un shot chacun.",
-    author: "Pierre",
-    nbPlayers: 3,
-    nbOccurences: 1,
-    color: "#2980b9",
-    gameMode: [GameModeId.ANY]
-  },
-  {
     title: "Le Mix'n'Twist",
     text:
       "Chaque joueur à 5 secondes pour trouver 2 ingrédients bons séparément mais mauvais si mixés ensemble. \n" +
       "Le jeu tourne dans le sens horaire. \n" +
       "Le premier joueur à ne pas trouver dans le temps imparti ou à reprendre un ingrédient précédemment dit boit 2 gorgées. " +
       player(1) +
-      "commence.",
+      " commence.",
     author: "Pierre",
     nbPlayers: 2,
     nbOccurences: 2,
     color: "#2ecc71",
-    gameMode: [GameModeId.ANY]
-  },
-  {
-    title: "Le barman",
-    text:
-      player(1) +
-      " se sent inspiré et décide de s'improviser barman pour le jeu ! Dès qu'un verre est vide, le barman le remplit en le chargeant selon son envie.",
-    author: "Mathias",
-    nbPlayers: 2,
-    nbOccurences: 1,
-    color: "#2980b9",
     gameMode: [GameModeId.ANY]
   },
   {
@@ -257,7 +218,7 @@ const defaultCard = [
     title: "J'ai dis PUUUTEUH",
     text:
       player(1) +
-      "est la pute. \n" +
+      " est la pute. \n" +
       "Elle doit boire les gorgées qui lui sont attribués par le Mac (aux conditions de sa règle). \n" +
       "S'il n'y a pas encore de Mac, prépare toi, il arrive.",
     author: "Etienne",
@@ -296,29 +257,6 @@ const defaultCard = [
     color: "#f1c40f",
     gameMode: [GameModeId.ANY]
   },
-  ,
-  {
-    title: "SHOT SHOT SHOT SHOT SHOT",
-    text:
-      player(1) +
-      " à très soif ! Il boit 1 cul sec (ou shooter), car l'alcool, c'est de l'eau",
-    author: "Ugo",
-    nbPlayers: 2,
-    nbOccurences: 2,
-    color: "#e67e22",
-    gameMode: [GameModeId.ANY]
-  },
-  {
-    title: "Bang Bang, you shot me down",
-    text:
-      player(1) +
-      " se sent d'humeur généreuse. Il distribue 1 cul sec (ou shooter).",
-    author: "Ugo",
-    nbPlayers: 2,
-    nbOccurences: 2,
-    color: "#e67e22",
-    gameMode: [GameModeId.ANY]
-  },
   {
     title: "Les Pourparlers",
     text:
@@ -342,7 +280,7 @@ const defaultCard = [
     nbPlayers: 3,
     nbOccurences: 1,
     color: "#2ecc71",
-    gameMode: [GameModeId.ANY]
+    gameMode: [GameModeId.MAIN]
   },
   {
     title: "Le chef d'orchestre",
@@ -359,7 +297,7 @@ const defaultCard = [
     nbPlayers: 2,
     nbOccurences: 4,
     color: "#2ecc71",
-    gameMode: [GameModeId.ANY]
+    gameMode: [GameModeId.MAIN]
   },
   {
     title: "Le jeu des marques ou thèmes",
@@ -425,19 +363,6 @@ const defaultCard = [
     gameMode: [GameModeId.ANY]
   },
   {
-    title: "La salope ",
-    text:
-      player(1) +
-      " devient la salope jusqu'à la fin de la partie. \n " +
-      "De ce fait, lorsqu'il s'adresse à un autre joueur, ce dernier devra, avant de lui répondre, lui dire : \"Ferme ta gueule salope!\". \n" +
-      "En cas d'oubli, le joueur prend une gorgée.",
-    author: "Jules",
-    nbPlayers: 2,
-    nbOccurences: 1,
-    color: "#2980b9",
-    gameMode: [GameModeId.ANY]
-  },
-  {
     title: "La reine des freeze",
     text:
       player(1) +
@@ -493,34 +418,6 @@ const defaultCard = [
     gameMode: [GameModeId.ANY]
   },
   {
-    title: "L'amour fou",
-    text:
-      player(1) +
-      " et " +
-      player(2) +
-      " s'aiment d'un amour sans limite. \n" +
-      "Et puisque qu'aimer, c'est multiplier le bonheur... Il en vas de même avec l'alcool ! \n" +
-      "Lorsque l'un des deux joueurs se voit attribuer une gorgée par le jeu, l'autre doit prendre le même nombre de gorgées. (Fonctionne pour les culs secs et shooter)",
-    author: "Jimmy",
-    nbPlayers: 3,
-    nbOccurences: 1,
-    color: "#2980b9",
-    gameMode: [GameModeId.ANY]
-  },
-  {
-    title: "Le fan",
-    text:
-      player(1) +
-      " est fan de " +
-      player(1) +
-      ". Il l'imite et boit comme lui. (Fonctionne pour les culs secs et shooter)",
-    author: "Jimmy",
-    nbPlayers: 3,
-    nbOccurences: 2,
-    color: "#2980b9",
-    gameMode: [GameModeId.ANY]
-  },
-  {
     title: "I'm a Wild Men",
     text:
       player(1) +
@@ -544,7 +441,7 @@ const defaultCard = [
     nbPlayers: 2,
     nbOccurences: 2,
     color: "#1abc9c",
-    gameMode: [GameModeId.ANY]
+    gameMode: [GameModeId.MAIN]
   },
   {
     title: "Action/Vérité",
@@ -612,15 +509,155 @@ const defaultCard = [
 ];
 const hardcoreCards = [
   {
-    title: "Le sprint",
+    title: "Aux frères tombés au combats",
     text:
-      player(1) +
-      " est un grand sportif ! Il doit prendre un mètre de shooter." +
-      "S'il préfère les courses de relais, il peux choisir un compagnon avec qui partager ces shooters !",
+      "Tous les joueurs trinques et prennes un shooter, en mémoire à tous leurs frères et soeurs tombés au combat.",
     author: "Ugo",
     nbPlayers: 3,
     nbOccurences: 1,
     color: "#e74c3c",
+    gameMode: [GameModeId.HARDCORE]
+  },
+  {
+    title: "Souvomir Souvomir",
+    text:
+      player(1) +
+      " nous racontes son meilleur vomis en soirée. Si les autres joueurs trouvent que c'est une belle action, tout le monde trinque et bois une gorgée",
+    author: "Richard",
+    nbPlayers: 3,
+    nbOccurences: 2,
+    color: "#e74c3c",
+    gameMode: [GameModeId.HARDCORE]
+  },
+  {
+    title: "Nos pires batailles",
+    text:
+      player(1) +
+      " nous racontes la plus grosse connerie qu'il ait faites en soirée. Si les autres joueurs trouvent que c'est une bonne histoire, tout le monde trinque et bois une gorgée",
+    author: 3,
+    nbPlayers: 3,
+    nbOccurences: 2,
+    color: "#e74c3c",
+    gameMode: [GameModeId.HARDCORE]
+  },
+  {
+    title: "L'amour fou",
+    text:
+      player(1) +
+      " et " +
+      player(2) +
+      " s'aiment d'un amour sans limite. \n" +
+      "Et puisque qu'aimer, c'est multiplier le bonheur... Il en vas de même avec l'alcool ! \n" +
+      "Lorsque l'un des deux joueurs se voit attribuer une gorgée par le jeu, l'autre doit prendre le même nombre de gorgées. (Fonctionne pour les culs secs et shooter)",
+    author: "Jimmy",
+    nbPlayers: 3,
+    nbOccurences: 1,
+    color: "#2980b9",
+    gameMode: [GameModeId.HARDCORE]
+  },
+  {
+    title: "Le fan",
+    text:
+      player(1) +
+      " est fan de " +
+      player(1) +
+      ". Il l'imite et boit comme lui. (Fonctionne pour les culs secs et shooter)",
+    author: "Jimmy",
+    nbPlayers: 3,
+    nbOccurences: 2,
+    color: "#2980b9",
+    gameMode: [GameModeId.HARDCORE]
+  },
+  {
+    title: "La salope ",
+    text:
+      player(1) +
+      " devient la salope jusqu'à la fin de la partie. \n " +
+      "De ce fait, lorsqu'il s'adresse à un autre joueur, ce dernier devra, avant de lui répondre, lui dire : \"Ferme ta gueule salope!\". \n" +
+      "En cas d'oubli, le joueur prend une gorgée.",
+    author: "Jules",
+    nbPlayers: 2,
+    nbOccurences: 1,
+    color: "#2980b9",
+    gameMode: [GameModeId.HARDCORE]
+  },
+  {
+    title: "La légion étrangère",
+    text:
+      "Tous les joueurs ayant déjà vomis à l'étranger boivent " +
+      number(1) +
+      " gorgées.",
+    ranges: [
+      {
+        min: 3,
+        max: 6
+      }
+    ],
+    author: "Jules",
+    nbPlayers: 3,
+    nbOccurences: 1,
+    color: "#2980b9",
+    gameMode: [GameModeId.HARDCORE]
+  },
+  {
+    title: "SHOT SHOT SHOT SHOT SHOT",
+    text:
+      player(1) +
+      " à très soif ! Il boit 1 cul sec (ou shooter), car l'alcool, c'est de l'eau",
+    author: "Ugo",
+    nbPlayers: 2,
+    nbOccurences: 2,
+    color: "#e67e22",
+    gameMode: [GameModeId.HARDCORE]
+  },
+  {
+    title: "Bang Bang, you shot me down",
+    text:
+      player(1) +
+      " se sent d'humeur généreuse. Il distribue 1 cul sec (ou shooter).",
+    author: "Ugo",
+    nbPlayers: 2,
+    nbOccurences: 2,
+    color: "#e67e22",
+    gameMode: [GameModeId.HARDCORE]
+  },
+  {
+    title: "Le shot-fu-mi",
+    text:
+      player(1) +
+      " et " +
+      player(2) +
+      " doivent faire un shifumi et designer d'avance le gagnant. \n" +
+      "Si le résultat est le bon, ils distribuent chacun un shot à la personne de leur choix. S'ils perdent ils prennent un shot chacun.",
+    author: "Pierre",
+    nbPlayers: 3,
+    nbOccurences: 2,
+    color: "#2ecc71",
+    gameMode: [GameModeId.HARDCORE]
+  },
+  {
+    title: "La liaison covalente",
+    text:
+      player(1) +
+      " et " +
+      player(2) +
+      " partagent maintenant des électrons. Ils doivent se servir un verre commun et le finir avant un de leur verres respectifs. \n" +
+      " S'ils ne le finissent pas à temps, ils prennent un shot chacun.",
+    author: "Pierre",
+    nbPlayers: 3,
+    nbOccurences: 1,
+    color: "#2980b9",
+    gameMode: [GameModeId.HARDCORE]
+  },
+  {
+    title: "Le barman",
+    text:
+      player(1) +
+      " se sent inspiré et décide de s'improviser barman pour le jeu ! Dès qu'un verre est vide, le barman le remplit en le chargeant selon son envie.",
+    author: "Mathias",
+    nbPlayers: 2,
+    nbOccurences: 1,
+    color: "#2980b9",
     gameMode: [GameModeId.HARDCORE]
   }
 ];
