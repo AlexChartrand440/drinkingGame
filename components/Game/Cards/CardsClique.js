@@ -40,7 +40,7 @@ export default class ModeSelector extends React.Component {
             underlayColor={"rgba(255,255,255,0.2)"}
           >
             <Icon.Ionicons
-              name={"md-arrow-back"}
+              name={"md-rewind"}
               size={45}
               color={"black"}
               alt={"Carte précédente"}
