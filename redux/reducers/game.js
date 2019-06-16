@@ -210,7 +210,10 @@ function generateNextCard(players, deck, cards, upcomingCards) {
   let newUpcominCards = [...upcomingCards];
   if (newUpcominCards.length > 0) {
     let upcomingIndex = newUpcominCards.findIndex(upcomingCard => {
-      return upcomingCard.indexToBeDrawn < cards.length;
+      return (
+        upcomingCard.indexToBeDrawn < cards.length ||
+        (possibleCards.length === 0 || cards.length >= nbCardsMax)
+      );
     });
     if (upcomingIndex >= 0) {
       newCard = newUpcominCards[upcomingIndex];

@@ -449,8 +449,8 @@ const defaultCard = [
       "Retour en enfance ! " +
       player(1) +
       " lance un Action/Vérite à " +
-      player(1) +
-      ". S'il refuse de faire l'action ou de répondre à la question, il boit 5 gorgées.",
+      player(2) +
+      ". S'il/elle refuse de faire l'action ou de répondre à la question, il/elle boit 5 gorgées.",
     author: "Ugo",
     nbPlayers: 2,
     nbOccurences: 1,
@@ -487,7 +487,7 @@ const defaultCard = [
   {
     title: "L'ostracisme",
     text:
-      "Pour les 5 prochaines cartes, " +
+      "Jusqu'à nouvel ordre, " +
       player(1) +
       " n'a pas le droit de parler sauf si une question lui est directement posé par un autre joueur. \n" +
       "Si il venait à prendre la parole sans en avoir le droit il devra prendre 2 gorgées par intenvention non autorisée.",
@@ -497,7 +497,7 @@ const defaultCard = [
     color: "#2ecc71",
     gameMode: [GameModeId.ANY],
     followingCard: {
-      title: "L'ostracisme fin",
+      title: "La rébélion",
       text:
         player(1) +
         " peux désormais parler même si aucune question ne lui à été posé",
@@ -560,7 +560,7 @@ const hardcoreCards = [
     text:
       player(1) +
       " est fan de " +
-      player(1) +
+      player(2) +
       ". Il l'imite et boit comme lui. (Fonctionne pour les culs secs et shooter)",
     author: "Jimmy",
     nbPlayers: 3,
@@ -572,14 +572,24 @@ const hardcoreCards = [
     title: "La salope ",
     text:
       player(1) +
-      " devient la salope jusqu'à la fin de la partie. \n " +
-      "De ce fait, lorsqu'il s'adresse à un autre joueur, ce dernier devra, avant de lui répondre, lui dire : \"Ferme ta gueule salope!\". \n" +
+      " devient la salope jusqu'à nouvelle ordre. \n " +
+      "De ce fait, lorsqu'il/elle s'adresse à un autre joueur, ce dernier devra, avant de lui répondre, lui dire : \"Ferme ta gueule salope!\". \n" +
       "En cas d'oubli, le joueur prend une gorgée.",
     author: "Jules",
     nbPlayers: 2,
     nbOccurences: 1,
     color: "#2980b9",
-    gameMode: [GameModeId.HARDCORE]
+    gameMode: [GameModeId.HARDCORE],
+    followingCard: {
+      drawDelay: 5,
+      title: "Le pardon",
+      text:
+        player(1) +
+        " n'est plus la salope !. \n" +
+        "Si aucun joueur n'a bu à cause de la salope, cette dernière prends 3 gorgées",
+      author: "Etienne",
+      color: "#2980b9"
+    }
   },
   {
     title: "La légion étrangère",
