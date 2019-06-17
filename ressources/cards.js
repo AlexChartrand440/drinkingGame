@@ -39,14 +39,33 @@ export const introductionCards = [
   },
   {
     title: "Le conseil des joueurs",
-    text:
-      player(1) +
-      ", " +
-      player(2) +
-      " et " +
-      player(3) +
-      " sont maintenant membre du conseil des joueurs. Ils seront en charge de régler tout litige au cours de la partie. \n" +
-      "A partir de maintenant, la loi, c'est eux !",
+    texts: [
+      {
+        range: {
+          min: 5,
+          max: 6
+        },
+        value:
+          player(1) +
+          " et " +
+          player(2) +
+          " sont maintenant membre du conseil des joueurs. Ils seront en charge de régler tout litige au cours de la partie. \n" +
+          "A partir de maintenant, la loi, c'est eux !"
+      },
+      {
+        range: {
+          min: 7
+        },
+        value:
+          player(1) +
+          ", " +
+          player(2) +
+          " et " +
+          player(3) +
+          " sont maintenant membre du conseil des joueurs. Ils seront en charge de régler tout litige au cours de la partie. \n" +
+          "A partir de maintenant, la loi, c'est eux !"
+      }
+    ],
     author: "Jules",
     nbPlayers: 5,
     nbOccurences: 1,

@@ -158,6 +158,9 @@ function recalculateGameState(state, newPlayers) {
         newCards,
         state.upcomingCards
       );
+      //FIXME : Pas fan du remplacement de la dernière carte à chaque fois
+      //Surtout que parfois regenerateLastCard retourne la lastCard en nextCard
+      //Et que donc on à une manipulation d'array inutile
       newCards.splice(newCards.length - 1, 1, nextCard);
       return {
         cards: [...newCards],
@@ -333,7 +336,9 @@ function isCardInGameMode(card, gamemode) {
  * possèdes une carte suivante obligatoire
  */
 function proccessCard(card, players) {
-  let newCard = proccessCardPlayers(card, players);
+  let newCard = { ...card };
+  newCard = proccessCardText(newCard, players);
+  newCard = proccessCardPlayers(newCard, players);
   newCard = proccessCardNumber(newCard);
   newCard = proccessCardWords(newCard);
   if (newCard.followingCard) {
@@ -344,6 +349,19 @@ function proccessCard(card, players) {
   } else {
     return { newCard };
   }
+}
+
+function proccessCardText(card, players) {
+  let newCard = { ...card };
+  if (card.texts && card.texts.length > 0) {
+    let newText = card.texts.find(elem => {
+      let min = elem.range.min;
+      let max = elem.range.max ? elem.range.max : 99999;
+      return min <= players.length && max >= players.length;
+    });
+    newCard.text = newText.value;
+  }
+  return newCard;
 }
 
 /**
