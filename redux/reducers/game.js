@@ -139,7 +139,7 @@ function recalculateGameState(state, newPlayers) {
   if (state.gamemode && !isGameFinished({ game: { ...state } })) {
     //Si on est encore dans les cartes d'introduction, on redemarre la partie
     if (isInIntroduction({ game: { ...state } })) {
-      let { introCards, deck, newUpcominCards } = initializeGameMode(
+      let { introCards, deck, upcomingCards } = initializeGameMode(
         state.gamemode,
         newPlayers
       );
@@ -147,7 +147,7 @@ function recalculateGameState(state, newPlayers) {
         cards: [...introCards],
         deck: [...deck],
         currentCardIndex: initialState.currentCardIndex,
-        upcomingCards: [...newUpcominCards]
+        upcomingCards: [...upcomingCards]
       };
       //Sinon on regenère seulement la dernière carte
     } else {
@@ -184,7 +184,7 @@ function regenerateLastCard(players, deck, cards, upcomingCards) {
   let lastCard = newCards[newCards.length - 1];
   // Si la dernière carte générée est une followingCard, on ne regenère rien
   if (lastCard.isFollowingCard) {
-    return { nextCard: lastCard, newDeck };
+    return { nextCard: lastCard, newDeck, newUpcominCards: upcomingCards };
   }
   let lastCardIndexInDeck = newDeck.findIndex(
     card => card.title === lastCard.title
@@ -439,7 +439,7 @@ function controlAllPlayer(players) {
   newPlayers.reduce((accumulateur, valeurCourante, index) => {
     let player = controlePlayerName(valeurCourante.name);
     let newAccumulateur;
-    if (accumulateur.includes(player.newName)) {
+    if (player.newName.length > 0 && accumulateur.includes(player.newName)) {
       player.errors = [
         ...player.errors,
         "Deux joueurs ne peuvent pas avoir le même nom"

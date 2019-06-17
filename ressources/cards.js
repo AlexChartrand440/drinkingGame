@@ -260,7 +260,11 @@ const defaultCard = [
   {
     title: "Les Pourparlers",
     text:
-      "Le conseil des joueurs choisit 2 mots sans rapport apparent. \n" +
+      "Le " +
+      player(2) +
+      " et " +
+      player(3) +
+      " choisissent 2 mots sans rapport apparent. \n" +
       player(1) +
       " à 15 secondes pour relier les deux mots avec des associations logiques. \n" +
       " S'il réussit, il distribue 2 gorgées, s'il perd, il en prend 3.",
@@ -572,7 +576,7 @@ const hardcoreCards = [
     title: "La salope ",
     text:
       player(1) +
-      " devient la salope jusqu'à nouvelle ordre. \n " +
+      " devient la salope jusqu'à nouvel ordre. \n " +
       "De ce fait, lorsqu'il/elle s'adresse à un autre joueur, ce dernier devra, avant de lui répondre, lui dire : \"Ferme ta gueule salope!\". \n" +
       "En cas d'oubli, le joueur prend une gorgée.",
     author: "Jules",
