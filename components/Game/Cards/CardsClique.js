@@ -3,9 +3,7 @@ import Card from "./Card/Card";
 
 import {
   View,
-  Text,
   StyleSheet,
-  Dimensions,
   TouchableHighlight
 } from "react-native";
 import { Icon } from "expo";

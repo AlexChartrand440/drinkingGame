@@ -54,7 +54,7 @@ export default function game(state = initialState, action) {
         state.cards[newCurrentCard].title !== endCard.title
       ) {
         /** On prépare une nouvelle carte */
-        let { nextCard, newDeck, newUpcominCards } = generateNextCard(
+        let { nextCard, newDeck, newUpcomingCards } = generateNextCard(
           state.players,
           state.deck,
           state.cards,
@@ -65,7 +65,7 @@ export default function game(state = initialState, action) {
           currentCardIndex: newCurrentCard,
           cards: [...state.cards, { ...nextCard }],
           deck: [...newDeck],
-          upcomingCards: [...newUpcominCards]
+          upcomingCards: [...newUpcomingCards]
         };
       } else {
         /** Sinon, on indique simplement qu'on est sur la carte suivante */
@@ -153,7 +153,7 @@ function recalculateGameState(state, newPlayers) {
       };
       //Sinon on regenère seulement la dernière carte
     } else {
-      let { newDeck, newUpcominCards, newCards } = regenerateLastCard(
+      let { newDeck, newUpcomingCards, newCards } = regenerateLastCard(
         newPlayers,
         state.deck,
         [...state.cards],
@@ -162,7 +162,7 @@ function recalculateGameState(state, newPlayers) {
       return {
         cards: [...newCards],
         deck: [...newDeck],
-        upcomingCards: [...newUpcominCards]
+        upcomingCards: [...newUpcomingCards]
       };
     }
   } else {
@@ -189,7 +189,7 @@ function regenerateLastCard(players, deck, cards, upcomingCards) {
     return {
       nextCard: lastCard,
       newDeck,
-      newUpcominCards: upcomingCards,
+      newUpcomingCards: upcomingCards,
       newCards
     };
   }
@@ -218,9 +218,7 @@ function regenerateLastCard(players, deck, cards, upcomingCards) {
   }
   if (lastCard.followingCard) {
     let upComingCardToRemoveIndex = newUpcomingCards.findIndex(
-      upCoCard =>
-        upCoCard.indexToBeDrawn ===
-        indexOfLastCard + lastCard.followingCard.drawDelay
+      upCoCard => upCoCard.parentId === lastCard.id
     );
     newUpcomingCards.splice(upComingCardToRemoveIndex, 1);
   }
@@ -233,7 +231,7 @@ function regenerateLastCard(players, deck, cards, upcomingCards) {
   return {
     newCards,
     newDeck: result.newDeck,
-    newUpcominCards: result.newUpcominCards
+    newUpcomingCards: result.newUpcomingCards
   };
 }
 /**
@@ -251,9 +249,16 @@ function generateNextCard(players, deck, cards, upcomingCards) {
   );
   let newCard;
   let followingCard;
-  let newUpcominCards = [...upcomingCards];
-  if (newUpcominCards.length > 0) {
-    let upcomingIndex = newUpcominCards.findIndex(upcomingCard => {
+  let newUpcomingCards = [...upcomingCards];
+  if (newUpcomingCards.length > 0) {
+    //On tries les upComingCards avant de les tirer
+    //pour priorisé les cartes avec un drawDelay faible
+    newUpcomingCards = [...newUpcomingCards].sort(
+      (upcomingCards, nextUpcomingCard) => {
+        return upcomingCards.drawDelay - nextUpcomingCard.drawDelay;
+      }
+    );
+    let upcomingIndex = newUpcomingCards.findIndex(upcomingCard => {
       let indexOfNextCard = cards.length;
       return (
         upcomingCard.indexToBeDrawn <= indexOfNextCard ||
@@ -261,8 +266,8 @@ function generateNextCard(players, deck, cards, upcomingCards) {
       );
     });
     if (upcomingIndex >= 0) {
-      newCard = newUpcominCards[upcomingIndex];
-      newUpcominCards.splice(upcomingIndex, 1);
+      newCard = newUpcomingCards[upcomingIndex];
+      newUpcomingCards.splice(upcomingIndex, 1);
     }
   }
 
@@ -320,9 +325,10 @@ function generateNextCard(players, deck, cards, upcomingCards) {
   }
 
   if (followingCard) {
-    newUpcominCards.push(generateUpcommingCard(followingCard, cards));
+    followingCard = { ...followingCard, parentId: newCard.id };
+    newUpcomingCards.push(generateUpcommingCard(followingCard, cards));
   }
-  return { nextCard: newCard, newDeck, newUpcominCards };
+  return { nextCard: newCard, newDeck, newUpcomingCards };
 }
 
 /**
@@ -377,7 +383,7 @@ function initializeGameMode(gamemode, players) {
       upcomingCards
     );
     deck = result.newDeck;
-    upcomingCards = result.newUpcominCards;
+    upcomingCards = result.newUpcomingCards;
     proccessedIntroCards.push(result.nextCard);
   }
   return {
@@ -417,6 +423,7 @@ function isCardInGameMode(card, gamemode) {
  */
 function proccessCard(card, players) {
   let newCard = { ...card };
+  newCard = generateCardId(newCard);
   newCard = proccessCardText(newCard, players);
   newCard = proccessCardPlayers(newCard, players);
   newCard = proccessCardNumber(newCard);
@@ -432,6 +439,11 @@ function proccessCard(card, players) {
   }
 }
 
+function generateCardId(card) {
+  let newCard = { ...card };
+  newCard.id = card.title + card.nbOccurences;
+  return newCard;
+}
 /**
  * Determine si la carte passée en paramètre
  * possèdes dans son text le flag passé en parramètre
