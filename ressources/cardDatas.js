@@ -1,5 +1,3 @@
-import { PLAYER } from "./cards";
-
 export const paysCapitale = [
   {
     question: "France",

@@ -153,17 +153,12 @@ function recalculateGameState(state, newPlayers) {
       };
       //Sinon on regenère seulement la dernière carte
     } else {
-      let newCards = [...state.cards];
-      let { nextCard, newDeck, newUpcominCards } = regenerateLastCard(
+      let { newDeck, newUpcominCards, newCards } = regenerateLastCard(
         newPlayers,
         state.deck,
-        newCards,
+        [...state.cards],
         state.upcomingCards
       );
-      //FIXME : Pas fan du remplacement de la dernière carte à chaque fois
-      //Surtout que parfois regenerateLastCard retourne la lastCard en nextCard
-      //Et que donc on à une manipulation d'array inutile
-      newCards.splice(newCards.length - 1, 1, nextCard);
       return {
         cards: [...newCards],
         deck: [...newDeck],
@@ -186,17 +181,60 @@ function recalculateGameState(state, newPlayers) {
 function regenerateLastCard(players, deck, cards, upcomingCards) {
   let newCards = [...cards];
   let newDeck = [...deck];
-  let lastCard = newCards[newCards.length - 1];
+  let indexOfLastCard = newCards.length - 1;
+  let lastCard = newCards[indexOfLastCard];
+  let newUpcomingCards = [...upcomingCards];
   // Si la dernière carte générée est une followingCard, on ne regenère rien
-  if (lastCard.isFollowingCard) {
-    return { nextCard: lastCard, newDeck, newUpcominCards: upcomingCards };
+  if (lastCard.isFollowingCard || players.length === 0) {
+    return {
+      nextCard: lastCard,
+      newDeck,
+      newUpcominCards: upcomingCards,
+      newCards
+    };
   }
   let lastCardIndexInDeck = newDeck.findIndex(
     card => card.title === lastCard.title
   );
-  newDeck[lastCardIndexInDeck].nbOccurences++;
+  let newCardInDeck = { ...newDeck[lastCardIndexInDeck] };
+  newCardInDeck.nbOccurences++;
+  /**
+   * Si la carte qu'on regenère était une carte mot
+   * on remet le mot dans la liste
+   * afin de pouvoir retomber dessus
+   */
+  if (lastCard.wordSelected && newCardInDeck.words) {
+    let newWords = [...newCardInDeck.words];
+    newWords.push(lastCard.wordSelected);
+    newCardInDeck.words = newWords;
+  }
+  /**
+   * Pareil pour les questions
+   */
+  if (lastCard.questionSelected && newCardInDeck.questions) {
+    let newQuestions = [...newCardInDeck.questions];
+    newQuestions.push(lastCard.questionSelected);
+    newCardInDeck.questions = newQuestions;
+  }
+  if (lastCard.followingCard) {
+    let upComingCardToRemoveIndex = newUpcomingCards.findIndex(
+      upCoCard =>
+        upCoCard.indexToBeDrawn ===
+        indexOfLastCard + lastCard.followingCard.drawDelay
+    );
+    newUpcomingCards.splice(upComingCardToRemoveIndex, 1);
+  }
 
-  return generateNextCard(players, deck, cards, upcomingCards);
+  newDeck[lastCardIndexInDeck] = newCardInDeck;
+  newCards.splice(indexOfLastCard, 1);
+  let result = generateNextCard(players, newDeck, newCards, newUpcomingCards);
+  newCards.push(result.nextCard);
+
+  return {
+    newCards,
+    newDeck: result.newDeck,
+    newUpcominCards: result.newUpcominCards
+  };
 }
 /**
  * Génére une nouvelle carte tirée dans le deck, crée en fonction des joueurus
@@ -204,6 +242,7 @@ function regenerateLastCard(players, deck, cards, upcomingCards) {
  * @param {*} players
  * @param {*} deck
  */
+//FIXME : Trop longue, need refacto
 function generateNextCard(players, deck, cards, upcomingCards) {
   let newDeck = [...deck];
   let cleanPlayers = removeEmptyPlayers(players);
@@ -215,8 +254,9 @@ function generateNextCard(players, deck, cards, upcomingCards) {
   let newUpcominCards = [...upcomingCards];
   if (newUpcominCards.length > 0) {
     let upcomingIndex = newUpcominCards.findIndex(upcomingCard => {
+      let indexOfNextCard = cards.length;
       return (
-        upcomingCard.indexToBeDrawn < cards.length ||
+        upcomingCard.indexToBeDrawn <= indexOfNextCard ||
         (possibleCards.length === 0 || cards.length >= nbCardsMax)
       );
     });
@@ -239,12 +279,41 @@ function generateNextCard(players, deck, cards, upcomingCards) {
       followingCard = proccessedCard.followingCard;
 
       let indexInDeck = newDeck.findIndex(card => newCard.title === card.title);
-      let cardInDeck = newDeck[indexInDeck];
-      let newNbOccurences = cardInDeck.nbOccurences - 1;
-      newDeck[indexInDeck] = {
-        ...newDeck[indexInDeck],
-        nbOccurences: newNbOccurences
-      };
+      let newCardInDeck = { ...newDeck[indexInDeck] };
+      let newNbOccurences = newCardInDeck.nbOccurences - 1;
+      newCardInDeck.nbOccurences = newNbOccurences;
+      /**
+       * On met à jours les mots disponible pour la carte
+       * dans le deck, afin de ne pas tomber
+       * deux fois sur le même mot
+       */
+      if (newCard.wordSelected && newCard.words && newCard.words.length > 0) {
+        let wordSelectedIndex = newCardInDeck.words.findIndex(
+          word => word === newCard.wordSelected
+        );
+        let newWords = [...newCardInDeck.words];
+        newWords.splice(wordSelectedIndex, 1);
+        newCardInDeck.words = newWords;
+      }
+      /**
+       * Pareil avec les questions
+       */
+      if (
+        newCard.questionSelected &&
+        newCard.questions &&
+        newCard.questions.length > 0
+      ) {
+        let questionSelectedIndex = newCardInDeck.questions.findIndex(
+          question =>
+            question.question === newCard.questionSelected.question &&
+            question.answer === newCard.questionSelected.answer
+        );
+        let newQuestions = [...newCardInDeck.questions];
+        newQuestions.splice(questionSelectedIndex, 1);
+        newCardInDeck.questions = newQuestions;
+      }
+
+      newDeck[indexInDeck] = newCardInDeck;
     } else {
       newCard = endCard;
     }
@@ -256,13 +325,22 @@ function generateNextCard(players, deck, cards, upcomingCards) {
   return { nextCard: newCard, newDeck, newUpcominCards };
 }
 
+/**
+ * génère une upcommingCard
+ * C'est à dire une carte qui liée à une autre
+ * qui devra sortir à un index données
+ * Index calculé à l'aide du drawdelay
+ * @param {*} followingCard
+ * @param {*} cards
+ */
 function generateUpcommingCard(followingCard, cards) {
+  let indexOfNextCard = cards.length;
   if (followingCard) {
     return {
       ...followingCard,
       indexToBeDrawn: followingCard.drawDelay
-        ? cards.length + followingCard.drawDelay
-        : cards.length
+        ? indexOfNextCard + followingCard.drawDelay
+        : indexOfNextCard + 1
     };
   } else {
     return {};
@@ -395,6 +473,7 @@ function proccessCardQuestions(card) {
   if (newCard.questions && newCard.questions.length > 0) {
     let index = Math.floor(Math.random() * newCard.questions.length);
     let { question, answer } = newCard.questions[index];
+    newCard.questionSelected = { question, answer };
     if (needToBeFilledBy(newCard, QUESTION)) {
       newCard = fillCard(newCard, QUESTION, question);
     }
@@ -506,6 +585,7 @@ function proccessCardWords(card) {
   ) {
     let index = Math.floor(Math.random() * newCard.words.length);
     newCard = fillCard(newCard, WORD, newCard.words[index]);
+    newCard.wordSelected = newCard.words[index];
   }
   return newCard;
 }

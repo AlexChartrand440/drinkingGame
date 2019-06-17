@@ -335,7 +335,7 @@ const defaultCard = [
       player(1) +
       " commence.",
     author: "Richard",
-    nbPlayers: 3,
+    nbPlayers: 2,
     nbOccurences: 4,
     color: "#2ecc71",
     gameMode: [GameModeId.ANY, GameModeId.TEST],
@@ -373,7 +373,7 @@ const defaultCard = [
         "La réponse était : " +
         ANSWER +
         ". Si personne n'a trouvé, tout le monde bois une gorgées",
-      drawDelay: 0,
+      drawDelay: 1,
       author: "Etienne",
       color: "#2980b9"
     }
@@ -540,7 +540,7 @@ const defaultCard = [
       text:
         player(1) +
         " peux désormais parler même si aucune question ne lui à été posé",
-      drawDelay: 5,
+      drawDelay: 6,
       author: "Etienne",
       color: "#2ecc71"
     }
