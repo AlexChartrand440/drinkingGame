@@ -12,7 +12,9 @@ import CardDeck, {
   endCard,
   WORD,
   player,
-  number
+  number,
+  QUESTION,
+  ANSWER
 } from "../../ressources/cards";
 import { GameModeId } from "../../ressources/gameModes";
 import { nbCardsMax } from "../../constants/Game";
@@ -341,6 +343,7 @@ function proccessCard(card, players) {
   newCard = proccessCardPlayers(newCard, players);
   newCard = proccessCardNumber(newCard);
   newCard = proccessCardWords(newCard);
+  newCard = proccessCardQuestions(newCard);
   if (newCard.followingCard) {
     return {
       newCard,
@@ -351,6 +354,71 @@ function proccessCard(card, players) {
   }
 }
 
+/**
+ * Determine si la carte passée en paramètre
+ * possèdes dans son text le flag passé en parramètre
+ * @param {text: String} card
+ * @param String flag
+ */
+function needToBeFilledBy(card, flag) {
+  if (card) {
+    return card.text.includes(flag);
+  } else {
+    return false;
+  }
+}
+
+/**
+ * Retourne une nouvelle instance de la carte passée en paramètre
+ * où toutes les itérations du flag ont étés remplacés par la value
+ * @param {text:String} card
+ * @param String flag
+ * @param String value
+ */
+function fillCard(card, flag, value) {
+  if (card) {
+    return { ...card, text: card.text.split(flag).join(value) };
+  } else {
+    return card;
+  }
+}
+
+/**
+ * Remplace toutes les itérations de QUESTION et ANSWER
+ * dans le texte de la carte par des données
+ * tirées aléatoire dans le tableau questions de la carte
+ * @param {text: String} card
+ */
+function proccessCardQuestions(card) {
+  let newCard = { ...card };
+
+  if (newCard.questions && newCard.questions.length > 0) {
+    let index = Math.floor(Math.random() * newCard.questions.length);
+    let { question, answer } = newCard.questions[index];
+    if (needToBeFilledBy(newCard, QUESTION)) {
+      newCard = fillCard(newCard, QUESTION, question);
+    }
+    if (needToBeFilledBy(newCard.followingCard, QUESTION)) {
+      newCard.followingCard = fillCard(
+        newCard.followingCard,
+        QUESTION,
+        question
+      );
+    }
+    if (needToBeFilledBy(newCard, ANSWER)) {
+      newCard = fillCard(newCard, ANSWER, answer);
+    }
+    if (needToBeFilledBy(newCard.followingCard, ANSWER)) {
+      newCard.followingCard = fillCard(newCard.followingCard, ANSWER, answer);
+    }
+  }
+  return newCard;
+}
+
+/**
+ * Fonction permettant de reoturner une carte avec la valeur text
+ * renseignée, dans le cas d'une cartes à textes multiples.
+ */
 function proccessCardText(card, players) {
   let newCard = { ...card };
   if (card.texts && card.texts.length > 0) {
@@ -365,47 +433,49 @@ function proccessCardText(card, players) {
 }
 
 /**
- * Fonction permettant de retourner une carte où
- * les variables de joueur contenue dans son texte son alimenté
+ * Fonction remplacement toutes les itérations de
+ * PLAYER(X) par un joueur tiré aléatoirement dans la liste des joueurs
+ * passés en paramètres
  */
 function proccessCardPlayers(card, players) {
   let newCard = { ...card };
-  let followingCard = newCard.followingCard
-    ? { ...newCard.followingCard }
-    : null;
   let playersAvailable = [...removeEmptyPlayers(players)];
   let playerIndex = 1;
   let selectPlayer = () => {
     let index = Math.floor(Math.random() * playersAvailable.length);
     return { index, player: playersAvailable[index] };
   };
-  let needPlayer = () =>
-    newCard.text.includes(player(playerIndex)) ||
-    (followingCard && followingCard.text.includes(player(playerIndex)));
   let playerSelected;
-  while (playersAvailable.length > 0 && needPlayer()) {
+  while (
+    playersAvailable.length > 0 &&
+    (needToBeFilledBy(newCard, player(playerIndex)) ||
+      needToBeFilledBy(newCard.followingCard, player(playerIndex)))
+  ) {
     playerSelected = selectPlayer();
-    newCard.text = newCard.text
-      .split(player(playerIndex))
-      .join(playerSelected.player.name);
-    if (followingCard) {
-      followingCard.text = followingCard.text
-        .split(player(playerIndex))
-        .join(playerSelected.player.name);
+    if (needToBeFilledBy(newCard, player(playerIndex))) {
+      newCard = fillCard(
+        newCard,
+        player(playerIndex),
+        playerSelected.player.name
+      );
+    }
+    if (needToBeFilledBy(newCard.followingCard, player(playerIndex))) {
+      newCard.followingCard = fillCard(
+        newCard.followingCard,
+        player(playerIndex),
+        playerSelected.player.name
+      );
     }
     playersAvailable.splice(playerSelected.index, 1);
     playerIndex++;
   }
 
-  if (followingCard) {
-    newCard.followingCard = followingCard;
-  }
-
   return newCard;
 }
 /**
- * Fonction permettant de retourner une carte où
- * les variables de nombre aléatoire contenue dans son texte son alimenté
+ * Fonction remplacement toutes les itérations de
+ * NUMBER(X) par un nombre tiré aléatoirement compris
+ * entre le min et le max de la variable ranges de la carte
  */
 function proccessCardNumber(card) {
   let newCard = { ...card };
@@ -414,24 +484,28 @@ function proccessCardNumber(card) {
     let range = newCard.ranges[numberIndex - 1];
     return Math.floor(Math.random() * (range.max + 1 - range.min)) + range.min;
   };
-  let needNumber = () => newCard.text.includes(number(numberIndex));
-  while (needNumber()) {
-    newCard.text = newCard.text.split(number(numberIndex)).join(getNumber());
+  while (needToBeFilledBy(newCard, number(numberIndex))) {
+    newCard = fillCard(newCard, number(numberIndex), getNumber());
     numberIndex++;
   }
 
   return newCard;
 }
 
+/**
+ * Fonction remplacement toutes les itérations de
+ * WORD par une chaine de caractère tiré aléatoirement
+ * dans le tableau words présent dans la carte
+ */
 function proccessCardWords(card) {
   let newCard = { ...card };
   if (
     newCard.words &&
     newCard.words.length > 0 &&
-    newCard.text.includes(WORD)
+    needToBeFilledBy(newCard, WORD)
   ) {
     let index = Math.floor(Math.random() * newCard.words.length);
-    newCard.text = newCard.text.split(WORD).join(newCard.words[index]);
+    newCard = fillCard(newCard, WORD, newCard.words[index]);
   }
   return newCard;
 }

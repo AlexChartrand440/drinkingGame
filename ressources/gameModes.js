@@ -16,5 +16,6 @@ export default [
     name: "Les anciens combattant",
     description:
       "Si ce n'est pas votre première soirée, et que vous êtes prêt à en découdre, ce mode est fait pour vous"
-  }
+  },
+  { id: GameModeId.TEST, name: "test", description: "ntm" }
 ];

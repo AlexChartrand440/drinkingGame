@@ -1,7 +1,10 @@
 import { GameModeId } from "./gameModes";
-const PLAYER = "#PLAYER";
+import { themesMain, paysCapitale } from "./cardDatas";
+export const PLAYER = "#PLAYER";
 const NUMBER = "#NUMBER";
 export const WORD = "#WORD";
+export const QUESTION = "#QUESTION";
+export const ANSWER = "#ANSWER";
 
 export function player(index) {
   return PLAYER + index;
@@ -141,7 +144,7 @@ const defaultCard = [
     author: "Pierre",
     nbPlayers: 3,
     nbOccurences: 2,
-    gameMode: [GameModeId.ANY]
+    gameMode: [GameModeId.MAIN, GameModeId.HARDCORE]
   },
   {
     title: "Le Mix'n'Twist",
@@ -155,7 +158,7 @@ const defaultCard = [
     nbPlayers: 2,
     nbOccurences: 2,
     color: "#2ecc71",
-    gameMode: [GameModeId.ANY]
+    gameMode: [GameModeId.MAIN, GameModeId.HARDCORE]
   },
   {
     title: "La réplique",
@@ -210,7 +213,7 @@ const defaultCard = [
     nbPlayers: 2,
     nbOccurences: 2,
     color: "#2ecc71",
-    gameMode: [GameModeId.ANY]
+    gameMode: [GameModeId.MAIN]
   },
   {
     title: "Le Mara(dic)thon",
@@ -336,19 +339,7 @@ const defaultCard = [
     nbOccurences: 4,
     color: "#2ecc71",
     gameMode: [GameModeId.ANY, GameModeId.TEST],
-    words: [
-      "Les marques de cigarettes",
-      "Les marques de sous-vêtement",
-      "Les marques d'ordinateur",
-      "Noms de jeux vidéos",
-      "Les marques de téléphone",
-      "Les clichés sur les parisiens",
-      "Les clichés sur les provinciaux",
-      "Les marques de voiture",
-      "Les marques de cosmetiques",
-      "Les marques de boisson alcoolisées",
-      "Les noms de médicaments"
-    ]
+    words: themesMain
   },
   {
     title: "Le jeu des capitales",
@@ -361,6 +352,31 @@ const defaultCard = [
     nbOccurences: 3,
     color: "#2ecc71",
     gameMode: [GameModeId.ANY]
+  },
+  {
+    title: "Le jeu des capitales v2",
+    text:
+      " Quel est la capitale du pays suivant : " +
+      QUESTION +
+      ". \n" +
+      "Le premier joueur à trouver le pays ou la capitale correspondante distribue 2 gorgées. \n" +
+      "La réponse est dans la carte suivante",
+    questions: paysCapitale,
+    author: "Yann",
+    nbPlayers: 2,
+    nbOccurences: 3,
+    color: "#2ecc71",
+    gameMode: [GameModeId.ANY],
+    followingCard: {
+      title: "Le jeu des capitales : Réponses",
+      text:
+        "La réponse était : " +
+        ANSWER +
+        ". Si personne n'a trouvé, tout le monde bois une gorgées",
+      drawDelay: 0,
+      author: "Etienne",
+      color: "#2980b9"
+    }
   },
   {
     title: "Joke d'alcolo",
@@ -526,8 +542,48 @@ const defaultCard = [
         " peux désormais parler même si aucune question ne lui à été posé",
       drawDelay: 5,
       author: "Etienne",
-      color: "#2980b9"
+      color: "#2ecc71"
     }
+  },
+  {
+    title: "J'ai déjà",
+    text:
+      player(1) +
+      " annonce quelque chose qu'il a déjà fait. \n" +
+      "Tout ceux qui ne l'on jamais fait boivent " +
+      number(1) +
+      "gorgées",
+    ranges: [
+      {
+        min: 2,
+        max: 5
+      }
+    ],
+    author: "Jules",
+    nbPlayer: 3,
+    nbOccurences: 2,
+    color: "#2ecc71",
+    gameMode: [GameModeId.ANY]
+  },
+  {
+    title: "J'ai jamais",
+    text:
+      player(1) +
+      " annonce quelque chose qu'il n'a jamais fait. \n" +
+      "Tout ceux qui l'on déjà fait boivent " +
+      number(1) +
+      "gorgées",
+    ranges: [
+      {
+        min: 2,
+        max: 5
+      }
+    ],
+    author: "Jules",
+    nbPlayer: 3,
+    nbOccurences: 2,
+    color: "#2ecc71",
+    gameMode: [GameModeId.ANY]
   }
 ];
 const hardcoreCards = [
@@ -691,6 +747,28 @@ const hardcoreCards = [
     nbPlayers: 2,
     nbOccurences: 1,
     color: "#2980b9",
+    gameMode: [GameModeId.HARDCORE]
+  },
+  {
+    title: "Frère d'arme",
+    text:
+      player(1) +
+      " désigne un frère d'arme qui devra prendre un shooter avec toi.",
+    author: "Ugo",
+    nbPlayers: 2,
+    nbOccurences: 2,
+    color: "#e74c3c",
+    gameMode: [GameModeId.HARDCORE]
+  },
+  {
+    title: "La confiance aveugle",
+    text:
+      "Les joueurs doivent désigner le joueur qu'ils pensent être le plus saoul. Ce dernier devra servir un shooter pour " +
+      player(1),
+    author: "Ugo",
+    nbPlayer: 4,
+    nbOccurences: 1,
+    color: "#e74c3c",
     gameMode: [GameModeId.HARDCORE]
   }
 ];
