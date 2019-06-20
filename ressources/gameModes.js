@@ -2,7 +2,8 @@ export const GameModeId = {
   ANY: "any",
   MAIN: "main",
   HARDCORE: "Hardcore",
-  TEST: "Test"
+  TEST: "Test",
+  DUMB: "Dumb"
 };
 
 export default [
@@ -17,5 +18,11 @@ export default [
     description:
       "Si ce n'est pas votre première soirée, et que vous êtes prêt à en découdre, ce mode est fait pour vous"
   },
-  { id: GameModeId.TEST, name: "test", description: "ntm" }
+
+  {
+    id: GameModeId.DUMB,
+    name: "Pas bien malin",
+    description:
+      "Si vous pensez que le QI cummulé des joueurs ne dépasse pas les deux chiffres, ce mode est pour vous !"
+  }
 ];

@@ -1,5 +1,5 @@
 import { GameModeId } from "./gameModes";
-import { themesMain, paysCapitale } from "./cardDatas";
+import { themesMain, paysCapitale, dumbQuestion } from "./cardDatas";
 export const PLAYER = "#PLAYER";
 const NUMBER = "#NUMBER";
 export const WORD = "#WORD";
@@ -250,6 +250,7 @@ const defaultCard = [
     gameMode: [GameModeId.ANY],
     followingCard: {
       title: "You're the best !",
+      drawDelay: 1,
       text:
         player(2) +
         " est le mac. \n" +
@@ -295,18 +296,6 @@ const defaultCard = [
     nbOccurences: 2,
     color: "#2ecc71",
     gameMode: [GameModeId.ANY]
-  },
-  {
-    title: "Le Trader",
-    text:
-      player(1) +
-      " choisit 2 devises. Les autres joueurs doivent estimer la valeur de l'une par rapport à l'autre. \n" +
-      "Le joueur le plus proche du résultat donne 4 gorgée.",
-    author: "Pierre",
-    nbPlayers: 3,
-    nbOccurences: 1,
-    color: "#2ecc71",
-    gameMode: [GameModeId.MAIN]
   },
   {
     title: "Le chef d'orchestre",
@@ -772,7 +761,71 @@ const hardcoreCards = [
     gameMode: [GameModeId.HARDCORE]
   }
 ];
-
+const dumbCards = [
+  {
+    title: "Dumb Unit Test",
+    text:
+      "Chaque joueur doit répondre à la question suivante : " +
+      QUESTION +
+      " \n" +
+      "Interdit de chercher sur internet ! Un shooter en cas de tentatriche !" +
+      "Suite à la prochaine carte !",
+    author: "Pierre",
+    nbPlayers: 2,
+    nbOccurences: 4,
+    color: "#2980b9",
+    gameMode: [GameModeId.DUMB],
+    followingCard: {
+      title: "Dumb Unit Test : La solution",
+      drawDelay: 1,
+      text:
+        " La réponse était : " +
+        ANSWER +
+        ". \n" +
+        "Si quelqu'un à eu la réponse exact, il distribue un shooter \n " +
+        "Sinon, la personne la plus proche de la réponse distribue 3 gorgées",
+      author: "Etienne",
+      color: "#2980b9"
+    },
+    questions: dumbQuestion
+  },
+  {
+    title: "Jean-Michel à peu près",
+    text:
+      player(1) +
+      " doit chanter/parler une chanson connue. Il à 1 minute pour la faire deviner. \n" +
+      "Le premier joueur à trouver la chanson choisi et " +
+      player(1) +
+      " distribuent chacun 3 gorgées. \n" +
+      "Si personne ne trouve la chanson, " +
+      player(1) +
+      " bois 3 gorgées ",
+    author: "Pierre",
+    nbPlayers: 2,
+    nbOccurences: 2,
+    color: "#2ecc71",
+    gameMode: [GameModeId.DUMB, GameModeId.MAIN]
+  },
+  {
+    title: "Joe l'acrobate",
+    text:
+      player(1) +
+      " doit " +
+      WORD +
+      ".\n" +
+      "S'il n'y arrive pas, il boit 3 gorgées !!",
+    words: [
+      "toucher son nez avec son doigt, le tout en passant son bras sous sa jambe",
+      "lecher son nez",
+      "lecher son coude"
+    ],
+    author: "Thibault",
+    color: "#2980b9",
+    nbPlayers: 1,
+    nbOccurences: 2,
+    gameMode: [GameModeId.DUMB]
+  }
+];
 export const endCard = {
   title: "Fin de la partie",
   text:
@@ -785,4 +838,4 @@ export const endCard = {
   end: true
 };
 
-export default [...defaultCard, ...hardcoreCards];
+export default [...defaultCard, ...hardcoreCards, ...dumbCards];
