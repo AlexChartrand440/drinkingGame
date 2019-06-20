@@ -73,3 +73,15 @@ export const RedirectToModeSelection = ({ onPress }) => (
     underlayColor={"rgba(0,0,0,0.2)"}
   />
 );
+
+export const OpenTimer = ({ onPress }) => (
+  <ButtonIcon
+    icon="md-timer"
+    position={{ bottom: 30, right: 20 }}
+    color={"black"}
+    onPress={() => onPress()}
+    alt={"Start timer"}
+    size={30}
+    underlayColor={"rgba(0,0,0,0.2)"}
+  />
+);

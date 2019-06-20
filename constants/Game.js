@@ -1,1 +1,1 @@
-export const nbCardsMax = 35;
+export const nbCardsMax = 40;

@@ -1,14 +1,11 @@
 import React from "react";
 import Card from "./Card/Card";
 
-import {
-  View,
-  StyleSheet,
-  TouchableHighlight
-} from "react-native";
+import { View, StyleSheet, TouchableHighlight } from "react-native";
 import { Icon } from "expo";
+import Timer from "../Timer/Timer";
 
-export default class ModeSelector extends React.Component {
+export default class CardsClique extends React.Component {
   static navigationOptions = {
     header: null
   };
@@ -46,6 +43,10 @@ export default class ModeSelector extends React.Component {
             />
           </TouchableHighlight>
         )}
+        {cards[currentCardIndex].timer && (
+          <Timer time={cards[currentCardIndex].timer} />
+        )}
+
         <TouchableHighlight
           style={styles.container}
           onPress={() => {
