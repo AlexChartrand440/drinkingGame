@@ -3,7 +3,7 @@ import React from "react";
 import { StyleSheet, TouchableHighlight } from "react-native";
 import { Icon } from "expo";
 
-class ButtonIcon extends React.Component {
+export class ButtonIcon extends React.Component {
   static navigationOptions = {
     header: null
   };
@@ -77,10 +77,22 @@ export const RedirectToModeSelection = ({ onPress }) => (
 export const OpenTimer = ({ onPress }) => (
   <ButtonIcon
     icon="md-timer"
+    position={{ bottom: 30, right: 70 }}
+    color={"black"}
+    onPress={() => onPress()}
+    alt={"Ouvrir le menu de minuteur"}
+    size={30}
+    underlayColor={"rgba(0,0,0,0.2)"}
+  />
+);
+
+export const OpenEffects = ({ onPress }) => (
+  <ButtonIcon
+    icon="md-help-buoy"
     position={{ bottom: 30, right: 20 }}
     color={"black"}
     onPress={() => onPress()}
-    alt={"Start timer"}
+    alt={"Voir les effets en jeux"}
     size={30}
     underlayColor={"rgba(0,0,0,0.2)"}
   />

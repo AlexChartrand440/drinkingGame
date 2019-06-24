@@ -4,6 +4,11 @@ import Card from "./Card/Card";
 import { View, StyleSheet, TouchableHighlight } from "react-native";
 import { Icon } from "expo";
 import Timer from "../Timer/Timer";
+import Effects from "../Effects/Effects";
+import {
+  RedirectToPlayerIcon,
+  RedirectToModeSelection
+} from "../ButtonIcon/ButtonIcon";
 
 export default class CardsClique extends React.Component {
   static navigationOptions = {
@@ -17,7 +22,8 @@ export default class CardsClique extends React.Component {
       onPressBack,
       onPressNextCard,
       isEndCardSelected,
-      isFirstCardSelected
+      isFirstCardSelected,
+      effects
     } = this.props;
     return (
       <View
@@ -46,6 +52,7 @@ export default class CardsClique extends React.Component {
         {cards[currentCardIndex].timer && (
           <Timer time={cards[currentCardIndex].timer} />
         )}
+        <Effects effects={effects} />
 
         <TouchableHighlight
           style={styles.container}
@@ -56,6 +63,16 @@ export default class CardsClique extends React.Component {
         >
           <Card {...cards[currentCardIndex]} />
         </TouchableHighlight>
+        <RedirectToPlayerIcon
+          onPress={() => {
+            this.props.navigation.navigate("PlayerSelection");
+          }}
+        />
+        <RedirectToModeSelection
+          onPress={() => {
+            this.props.navigation.navigate("ModeSelection");
+          }}
+        />
       </View>
     );
   }

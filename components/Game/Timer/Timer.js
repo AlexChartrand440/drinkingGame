@@ -98,13 +98,13 @@ export default class Timer extends React.Component {
 
 const styles = StyleSheet.create({
   container: {
-    zIndex: 1,
+    zIndex: 2,
     backgroundColor: "#dfe6e9",
     position: "absolute",
     padding: 10,
     height: 44,
     bottom: 30,
-    right: 20,
+    right: 70,
     flexDirection: "row",
     borderRadius: 22,
     alignItems: "center"

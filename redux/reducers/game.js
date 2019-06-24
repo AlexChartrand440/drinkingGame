@@ -23,7 +23,8 @@ const initialState = {
   cards: [],
   upcomingCards: [],
   players: [{ name: "", errors: [] }],
-  currentCardIndex: 0
+  currentCardIndex: 0,
+  effects: []
 };
 
 //TODO : Reflechir à une solution pour simplifier ce reducer trop complexe
@@ -31,7 +32,7 @@ export default function game(state = initialState, action) {
   switch (action.type) {
     /** GameMode */
     case SELECT_GAMEMODE:
-      let { introCards, deck, upcomingCards } = initializeGameMode(
+      let { introCards, deck, upcomingCards, effects } = initializeGameMode(
         action.gamemode,
         state.players
       );
@@ -42,7 +43,8 @@ export default function game(state = initialState, action) {
         cards: [...introCards],
         deck: [...deck],
         currentCardIndex: initialState.currentCardIndex,
-        upcomingCards
+        upcomingCards,
+        effects
       };
     /** Cards */
     case INCREMENT_CURRENT_CARD:
@@ -54,18 +56,25 @@ export default function game(state = initialState, action) {
         state.cards[newCurrentCard].title !== endCard.title
       ) {
         /** On prépare une nouvelle carte */
-        let { nextCard, newDeck, newUpcomingCards } = generateNextCard(
+        let {
+          nextCard,
+          newDeck,
+          newUpcomingCards,
+          newEffects
+        } = generateNextCard(
           state.players,
           state.deck,
           state.cards,
-          state.upcomingCards
+          state.upcomingCards,
+          state.effects
         );
         return {
           ...state,
           currentCardIndex: newCurrentCard,
           cards: [...state.cards, { ...nextCard }],
           deck: [...newDeck],
-          upcomingCards: [...newUpcomingCards]
+          upcomingCards: [...newUpcomingCards],
+          effects: [...newEffects]
         };
       } else {
         /** Sinon, on indique simplement qu'on est sur la carte suivante */
@@ -129,6 +138,8 @@ export const hasPlayer = state =>
   state.game.players.some(player => player.name !== "");
 export const arePlayersNameCorrect = state =>
   !state.game.players.some(player => player.errors.length > 0);
+/** Effect */
+export const getEffects = state => state.game.effects;
 
 /** FUNCTIONS */
 
@@ -236,20 +247,67 @@ function regenerateLastCard(players, deck, cards, upcomingCards) {
 }
 /**
  * Génére une nouvelle carte tirée dans le deck, crée en fonction des joueurus
- * Retour la carte, ainsi que le deck mis à jour ("retrait" de la carte tirée)
+ * Retour la carte, le deck mis à jour ("retrait" de la carte tirée)
+ * les effects (Certain ajouté, certain supprimé)
+ * les upcomingCards (Suprimmée si tirée)
  * @param {*} players
  * @param {*} deck
+ * @param {*} cards
+ * @param {*} upcomingCards
+ * @param {*} effects
  */
-//FIXME : Trop longue, need refacto
-function generateNextCard(players, deck, cards, upcomingCards) {
+function generateNextCard(players, deck, cards, upcomingCards, effects) {
+  let cardsLength = cards.length;
+
+  let { newCard, newUpcomingCards, newDeck, followingCard } = handleCardDraw(
+    deck,
+    players,
+    upcomingCards,
+    cardsLength
+  );
+  //On génère l'effet de la carte précèdente (Celle actuellement affiché et non celle pré-tirée)
+  let newEffects = handleNewEffects(cards[cards.length - 1], effects);
+  if (followingCard) {
+    followingCard = generateCardId({ ...followingCard, parentId: newCard.id });
+    newUpcomingCards.push(generateUpcommingCard(followingCard, cards));
+  }
+
+  return { nextCard: newCard, newDeck, newUpcomingCards, newEffects };
+}
+
+function handleCardDraw(deck, players, upcomingCards, cardsLength) {
   let newDeck = [...deck];
   let cleanPlayers = removeEmptyPlayers(players);
   let possibleCards = newDeck.filter(
     card => card.nbPlayers <= cleanPlayers.length && card.nbOccurences > 0
   );
-  let newCard;
   let followingCard;
+
+  //Avant de tirer une carte dans le deck, on verifie si on ne doit pas tirer une upcomingCard
+  let { newCard, newUpcomingCards } = getUpcomingCard(
+    upcomingCards,
+    cardsLength,
+    possibleCards
+  );
+  //Si on ne tire pas de upcomingCard, alors on va tirer une carte dans le deck
+  if (!newCard) {
+    let result = getCardFromDeck(
+      deck,
+      cleanPlayers,
+      cardsLength,
+      possibleCards
+    );
+    newCard = result.newCard;
+    newDeck = result.newDeck;
+    followingCard = result.followingCard;
+  }
+
+  return { newCard, newUpcomingCards, newDeck, followingCard };
+}
+
+function getUpcomingCard(upcomingCards, cardsLength, possibleCards) {
   let newUpcomingCards = [...upcomingCards];
+  let newCard;
   if (newUpcomingCards.length > 0) {
     //On tries les upComingCards avant de les tirer
     //pour priorisé les cartes avec un drawDelay faible
@@ -259,10 +317,10 @@ function generateNextCard(players, deck, cards, upcomingCards) {
       }
     );
     let upcomingIndex = newUpcomingCards.findIndex(upcomingCard => {
-      let indexOfNextCard = cards.length;
+      let indexOfNextCard = cardsLength;
       return (
         upcomingCard.indexToBeDrawn <= indexOfNextCard ||
-        (possibleCards.length === 0 || cards.length >= nbCardsMax)
+        (possibleCards.length === 0 || cardsLength >= nbCardsMax)
       );
     });
     if (upcomingIndex >= 0) {
@@ -271,66 +329,98 @@ function generateNextCard(players, deck, cards, upcomingCards) {
     }
   }
 
-  if (!newCard) {
-    if (possibleCards.length > 0 && cards.length < nbCardsMax) {
-      let indexOfSelectedCard = Math.floor(
-        Math.random() * possibleCards.length
-      );
-      let proccessedCard = proccessCard(
-        possibleCards[indexOfSelectedCard],
-        cleanPlayers
-      );
-      newCard = proccessedCard.newCard;
-      followingCard = proccessedCard.followingCard;
+  return { newCard, newUpcomingCards };
+}
 
-      let indexInDeck = newDeck.findIndex(card => newCard.title === card.title);
-      let newCardInDeck = { ...newDeck[indexInDeck] };
-      let newNbOccurences = newCardInDeck.nbOccurences - 1;
-      newCardInDeck.nbOccurences = newNbOccurences;
-      /**
-       * On met à jours les mots disponible pour la carte
-       * dans le deck, afin de ne pas tomber
-       * deux fois sur le même mot
-       */
-      if (newCard.wordSelected && newCard.words && newCard.words.length > 0) {
-        let wordSelectedIndex = newCardInDeck.words.findIndex(
-          word => word === newCard.wordSelected
-        );
-        let newWords = [...newCardInDeck.words];
-        newWords.splice(wordSelectedIndex, 1);
-        newCardInDeck.words = newWords;
-      }
-      /**
-       * Pareil avec les questions
-       */
-      if (
-        newCard.questionSelected &&
-        newCard.questions &&
-        newCard.questions.length > 0
-      ) {
-        let questionSelectedIndex = newCardInDeck.questions.findIndex(
-          question =>
-            question.question === newCard.questionSelected.question &&
-            question.answer === newCard.questionSelected.answer
-        );
-        let newQuestions = [...newCardInDeck.questions];
-        newQuestions.splice(questionSelectedIndex, 1);
-        newCardInDeck.questions = newQuestions;
-      }
+function getCardFromDeck(deck, players, cardsLength, possibleCards) {
+  let newDeck = [...deck];
+  let followingCard;
+  if (possibleCards.length > 0 && cardsLength < nbCardsMax) {
+    let indexOfSelectedCard = Math.floor(Math.random() * possibleCards.length);
+    let proccessedCard = proccessCard(
+      possibleCards[indexOfSelectedCard],
+      players
+    );
+    newCard = proccessedCard.newCard;
+    followingCard = proccessedCard.followingCard;
 
-      newDeck[indexInDeck] = newCardInDeck;
-    } else {
-      newCard = endCard;
+    let indexInDeck = newDeck.findIndex(card => newCard.title === card.title);
+    let newCardInDeck = { ...newDeck[indexInDeck] };
+    let newNbOccurences = newCardInDeck.nbOccurences - 1;
+    newCardInDeck.nbOccurences = newNbOccurences;
+    /**
+     * On met à jours les mots disponible pour la carte
+     * dans le deck, afin de ne pas tomber
+     * deux fois sur le même mot
+     */
+    if (newCard.wordSelected && newCard.words && newCard.words.length > 0) {
+      let wordSelectedIndex = newCardInDeck.words.findIndex(
+        word => word === newCard.wordSelected
+      );
+      let newWords = [...newCardInDeck.words];
+      newWords.splice(wordSelectedIndex, 1);
+      newCardInDeck.words = newWords;
+    }
+    /**
+     * Pareil avec les questions
+     */
+    if (
+      newCard.questionSelected &&
+      newCard.questions &&
+      newCard.questions.length > 0
+    ) {
+      let questionSelectedIndex = newCardInDeck.questions.findIndex(
+        question =>
+          question.question === newCard.questionSelected.question &&
+          question.answer === newCard.questionSelected.answer
+      );
+      let newQuestions = [...newCardInDeck.questions];
+      newQuestions.splice(questionSelectedIndex, 1);
+      newCardInDeck.questions = newQuestions;
+    }
+
+    newDeck[indexInDeck] = newCardInDeck;
+  } else {
+    newCard = endCard;
+  }
+
+  return { newCard, newDeck, followingCard };
+}
+
+function handleNewEffects(card, effects) {
+  let newEffects = [...effects];
+
+  if (card.effect) {
+    let newEffect = {
+      ...card.effect,
+      parentTitle: card.title,
+      parentId: card.id
+    };
+    if (newEffect.removeParentEffect) {
+      let previousSimilarEffectIndex = newEffects.findIndex(
+        e => card.parentId === e.parentId
+      );
+      if (previousSimilarEffectIndex >= 0) {
+        newEffects.splice(previousSimilarEffectIndex, 1);
+      }
+    }
+    if (newEffect.isUnique) {
+      //On cherche un effet dont le parentId est celui de la carte précédente similaire à celle
+      //dont on est entrain de générer l'effet
+      let previousSimilarEffectIndex = newEffects.findIndex(
+        e => newEffect.parentTitle === e.parentTitle
+      );
+      if (previousSimilarEffectIndex >= 0) {
+        newEffects.splice(previousSimilarEffectIndex, 1);
+      }
+    }
+    if (newEffect.text) {
+      newEffects.push(newEffect);
     }
   }
 
-  if (followingCard) {
-    followingCard = { ...followingCard, parentId: newCard.id };
-    newUpcomingCards.push(generateUpcommingCard(followingCard, cards));
-  }
-  return { nextCard: newCard, newDeck, newUpcomingCards };
+  return newEffects;
 }
-
 /**
  * génère une upcommingCard
  * C'est à dire une carte qui liée à une autre
@@ -389,7 +479,8 @@ function initializeGameMode(gamemode, players) {
   return {
     introCards: proccessedIntroCards,
     deck,
-    upcomingCards: [...upcomingCards]
+    upcomingCards: [...upcomingCards],
+    effects: initialState.effects
   };
 }
 
@@ -429,6 +520,7 @@ function proccessCard(card, players) {
   newCard = proccessCardNumber(newCard);
   newCard = proccessCardWords(newCard);
   newCard = proccessCardQuestions(newCard);
+
   if (newCard.followingCard) {
     return {
       newCard,
@@ -447,12 +539,12 @@ function generateCardId(card) {
 /**
  * Determine si la carte passée en paramètre
  * possèdes dans son text le flag passé en parramètre
- * @param {text: String} card
+ * @param String text
  * @param String flag
  */
-function needToBeFilledBy(card, flag) {
-  if (card) {
-    return card.text.includes(flag);
+function needToBeFilledBy(text, flag) {
+  if (text) {
+    return text.includes(flag);
   } else {
     return false;
   }
@@ -461,15 +553,15 @@ function needToBeFilledBy(card, flag) {
 /**
  * Retourne une nouvelle instance de la carte passée en paramètre
  * où toutes les itérations du flag ont étés remplacés par la value
- * @param {text:String} card
+ * @param String text
  * @param String flag
  * @param String value
  */
-function fillCard(card, flag, value) {
-  if (card) {
-    return { ...card, text: card.text.split(flag).join(value) };
+function fillText(text, flag, value) {
+  if (text) {
+    return text.split(flag).join(value);
   } else {
-    return card;
+    return text;
   }
 }
 
@@ -486,21 +578,29 @@ function proccessCardQuestions(card) {
     let index = Math.floor(Math.random() * newCard.questions.length);
     let { question, answer } = newCard.questions[index];
     newCard.questionSelected = { question, answer };
-    if (needToBeFilledBy(newCard, QUESTION)) {
-      newCard = fillCard(newCard, QUESTION, question);
+    if (needToBeFilledBy(newCard.text, QUESTION)) {
+      newCard.text = fillText(newCard.text, QUESTION, question);
     }
-    if (needToBeFilledBy(newCard.followingCard, QUESTION)) {
-      newCard.followingCard = fillCard(
-        newCard.followingCard,
-        QUESTION,
-        question
-      );
+    if (
+      newCard.followingCard &&
+      needToBeFilledBy(newCard.followingCard.text, QUESTION)
+    ) {
+      newCard.followingCard = {
+        ...newCard.followingCard,
+        text: fillText(newCard.followingCard.text, QUESTION, question)
+      };
     }
-    if (needToBeFilledBy(newCard, ANSWER)) {
-      newCard = fillCard(newCard, ANSWER, answer);
+    if (needToBeFilledBy(newCard.text, ANSWER)) {
+      newCard.text = fillText(newCard.text, ANSWER, answer);
     }
-    if (needToBeFilledBy(newCard.followingCard, ANSWER)) {
-      newCard.followingCard = fillCard(newCard.followingCard, ANSWER, answer);
+    if (
+      newCard.followingCard &&
+      needToBeFilledBy(newCard.followingCard.text, ANSWER)
+    ) {
+      newCard.followingCard = {
+        ...newCard.followingCard,
+        text: fillText(newCard.followingCard.text, ANSWER, answer)
+      };
     }
   }
   return newCard;
@@ -534,31 +634,85 @@ function proccessCardPlayers(card, players) {
   let playerIndex = 1;
   let selectPlayer = () => {
     let index = Math.floor(Math.random() * playersAvailable.length);
-    return { index, player: playersAvailable[index] };
+    return { index, ...playersAvailable[index] };
   };
+
   let playerSelected;
+  let cardNeedPlayer = needToBeFilledBy(newCard.text, player(playerIndex));
+  let followingCardNeedPlayer =
+    newCard.followingCard &&
+    needToBeFilledBy(newCard.followingCard.text, player(playerIndex));
+
+  let followingCardEffectNeedPlayer =
+    newCard.followingCard &&
+    newCard.followingCard.effect &&
+    needToBeFilledBy(newCard.followingCard.effect.text, player(playerIndex));
+  let cardEffectNeedPlayer =
+    newCard.effect &&
+    needToBeFilledBy(newCard.effect.text, player(playerIndex));
+
   while (
     playersAvailable.length > 0 &&
-    (needToBeFilledBy(newCard, player(playerIndex)) ||
-      needToBeFilledBy(newCard.followingCard, player(playerIndex)))
+    (cardNeedPlayer ||
+      followingCardNeedPlayer ||
+      followingCardEffectNeedPlayer ||
+      cardEffectNeedPlayer)
   ) {
     playerSelected = selectPlayer();
-    if (needToBeFilledBy(newCard, player(playerIndex))) {
-      newCard = fillCard(
-        newCard,
+    if (cardNeedPlayer) {
+      newCard.text = fillText(
+        newCard.text,
         player(playerIndex),
-        playerSelected.player.name
+        playerSelected.name
       );
     }
-    if (needToBeFilledBy(newCard.followingCard, player(playerIndex))) {
-      newCard.followingCard = fillCard(
-        newCard.followingCard,
-        player(playerIndex),
-        playerSelected.player.name
-      );
+    if (followingCardNeedPlayer) {
+      newCard.followingCard = {
+        ...newCard.followingCard,
+        text: fillText(
+          newCard.followingCard.text,
+          player(playerIndex),
+          playerSelected.name
+        )
+      };
     }
+    if (followingCardEffectNeedPlayer) {
+      newCard.followingCard = {
+        ...newCard.followingCard,
+        effect: {
+          ...newCard.followingCard.effect,
+          text: fillText(
+            newCard.followingCard.effect.text,
+            player(playerIndex),
+            playerSelected.name
+          )
+        }
+      };
+    }
+    if (cardEffectNeedPlayer) {
+      newCard.effect = {
+        ...newCard.effect,
+        text: fillText(
+          newCard.effect.text,
+          player(playerIndex),
+          playerSelected.name
+        )
+      };
+    }
+
     playersAvailable.splice(playerSelected.index, 1);
     playerIndex++;
+    cardNeedPlayer = needToBeFilledBy(newCard.text, player(playerIndex));
+    followingCardNeedPlayer =
+      newCard.followingCard &&
+      needToBeFilledBy(newCard.followingCard.text, player(playerIndex));
+    cardEffectNeedPlayer =
+      newCard.effect &&
+      needToBeFilledBy(newCard.effect.text, player(playerIndex));
+    followingCardEffectNeedPlayer =
+      newCard.followingCard &&
+      newCard.followingCard.effect &&
+      needToBeFilledBy(newCard.followingCard.effect.text, player(playerIndex));
   }
 
   return newCard;
@@ -575,8 +729,8 @@ function proccessCardNumber(card) {
     let range = newCard.ranges[numberIndex - 1];
     return Math.floor(Math.random() * (range.max + 1 - range.min)) + range.min;
   };
-  while (needToBeFilledBy(newCard, number(numberIndex))) {
-    newCard = fillCard(newCard, number(numberIndex), getNumber());
+  while (needToBeFilledBy(newCard.text, number(numberIndex))) {
+    newCard.text = fillText(newCard.text, number(numberIndex), getNumber());
     numberIndex++;
   }
 
@@ -593,10 +747,10 @@ function proccessCardWords(card) {
   if (
     newCard.words &&
     newCard.words.length > 0 &&
-    needToBeFilledBy(newCard, WORD)
+    needToBeFilledBy(newCard.text, WORD)
   ) {
     let index = Math.floor(Math.random() * newCard.words.length);
-    newCard = fillCard(newCard, WORD, newCard.words[index]);
+    newCard.text = fillText(newCard.text, WORD, newCard.words[index]);
     newCard.wordSelected = newCard.words[index];
   }
   return newCard;

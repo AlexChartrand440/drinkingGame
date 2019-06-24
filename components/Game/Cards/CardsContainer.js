@@ -1,6 +1,5 @@
 import { connect } from "react-redux";
 import {
-  addCard,
   decrementCurrentCard,
   incrementCurrentCard
 } from "../../../redux/actions/game";
@@ -9,12 +8,14 @@ import {
   getCards,
   getCurrentCardIndex,
   isEndCardSelected,
-  isFirstCardSelected
+  isFirstCardSelected,
+  getEffects
 } from "../../../redux/reducers/game";
 
 const mapStateToProps = state => {
   return {
     cards: getCards(state),
+    effects: getEffects(state),
     currentCardIndex: getCurrentCardIndex(state),
     isEndCardSelected: isEndCardSelected(state),
     isFirstCardSelected: isFirstCardSelected(state)

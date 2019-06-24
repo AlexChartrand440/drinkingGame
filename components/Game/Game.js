@@ -23,16 +23,6 @@ export default class Game extends React.Component {
   render() {
     return (
       <>
-        <RedirectToPlayerIcon
-          onPress={() => {
-            this.props.navigation.navigate("PlayerSelection");
-          }}
-        />
-        <RedirectToModeSelection
-          onPress={() => {
-            this.props.navigation.navigate("ModeSelection");
-          }}
-        />
         <CardsContainer {...this.props} />
       </>
     );

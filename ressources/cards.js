@@ -197,6 +197,7 @@ const defaultCard = [
     nbPlayers: 2,
     nbOccurences: 2,
     color: CardsColors.game,
+    effect: { isUnique: true, text: player(1) + " est le roi des pouces" },
     gameMode: [GameModeId.ANY]
   },
   {
@@ -253,6 +254,7 @@ const defaultCard = [
     nbOccurences: 2,
     color: CardsColors.game,
     gameMode: [GameModeId.ANY],
+    effect: { text: player(1) + " est la pute", isUnique: true },
     followingCard: {
       title: "You're the best !",
       drawDelay: 1,
@@ -260,6 +262,7 @@ const defaultCard = [
         player(2) +
         " est le mac. \n" +
         "Lorsqu'il reçoit une gorgée, il peut les donner à sa pute (Mais il doit toujours lui en rester au moins une).",
+      effect: { text: player(2) + " est le mac", isUnique: true },
       author: "Etienne",
       color: CardsColors.game
     }
@@ -354,6 +357,7 @@ const defaultCard = [
       QUESTION +
       ". \n" +
       "Le premier joueur à trouver le pays ou la capitale correspondante distribue 2 gorgées. \n" +
+      "Cependant, si il à eu tors, il prendra 2 gorgées \n" +
       "La réponse est dans la carte suivante",
     questions: paysCapitale,
     author: "Yann",
@@ -366,7 +370,7 @@ const defaultCard = [
       text:
         "La réponse était : " +
         ANSWER +
-        ". Si personne n'a trouvé, tout le monde bois une gorgées",
+        ". Si personne n'a répondu, tout le monde bois une gorgées",
       drawDelay: 1,
       author: "Yann",
       color: CardsColors.game
@@ -404,6 +408,7 @@ const defaultCard = [
     author: "Jules",
     nbPlayers: 3,
     nbOccurences: 3,
+    effect: { text: player(1) + " est la reine des freeze", isUnique: true },
     color: CardsColors.effect,
     gameMode: [GameModeId.ANY]
   },
@@ -473,6 +478,7 @@ const defaultCard = [
     author: "Jimmy",
     nbPlayers: 2,
     nbOccurences: 2,
+    effect: { text: player(1) + " dispose d'une carte de protection" },
     color: CardsColors.goodEffet,
     gameMode: [GameModeId.MAIN]
   },
@@ -499,6 +505,7 @@ const defaultCard = [
       " boit une gorgée, pour faire passer le goût.",
     author: "Pierre",
     nbPlayers: 3,
+    effect: { isUnique: true, text: player(1) + " est le suceur" },
     nbOccurences: 2,
     color: CardsColors.effect,
     gameMode: [GameModeId.ANY]
@@ -530,6 +537,7 @@ const defaultCard = [
     nbOccurences: 1,
     color: CardsColors.effect,
     gameMode: [GameModeId.ANY],
+    effect: { text: player(1) + " n'a plus de droit de parler" },
     followingCard: {
       title: "La rébélion",
       text:
@@ -537,6 +545,7 @@ const defaultCard = [
         " peux désormais parler même si aucune question ne lui à été posé",
       drawDelay: 6,
       author: "Etienne",
+      effect: { removeParentEffect: true },
       color: CardsColors.effect
     }
   },
@@ -626,6 +635,10 @@ const hardcoreCards = [
     author: "Jimmy",
     nbPlayers: 3,
     nbOccurences: 1,
+    effect: {
+      text: player(1) + " et " + player(2) + " sont liés.",
+      isUnique: true
+    },
     color: CardsColors.averageDrinkAction,
     gameMode: [GameModeId.HARDCORE]
   },
@@ -639,6 +652,7 @@ const hardcoreCards = [
     author: "Jimmy",
     nbPlayers: 3,
     nbOccurences: 2,
+    effect: { text: player(1) + " est fan de " + player(2), isUnique: true },
     color: CardsColors.effect,
     gameMode: [GameModeId.HARDCORE]
   },
@@ -653,6 +667,7 @@ const hardcoreCards = [
     nbPlayers: 2,
     nbOccurences: 1,
     color: CardsColors.effect,
+    effect: { text: player(1) + " est la salope", isUnique: true },
     gameMode: [GameModeId.HARDCORE],
     followingCard: {
       drawDelay: 5,
@@ -661,6 +676,7 @@ const hardcoreCards = [
         player(1) +
         " n'est plus la salope !. \n" +
         "Si aucun joueur n'a bu à cause de la salope, cette dernière prends 3 gorgées",
+      effect: { removeParentEffect: true },
       author: "Jules",
       color: CardsColors.effect
     }
@@ -730,6 +746,9 @@ const hardcoreCards = [
     author: "Pierre",
     nbPlayers: 3,
     nbOccurences: 1,
+    effect: {
+      text: player(1) + " et " + player(2) + " partage une liason covalente"
+    },
     color: CardsColors.effect,
     gameMode: [GameModeId.HARDCORE]
   },
@@ -742,6 +761,7 @@ const hardcoreCards = [
     nbPlayers: 2,
     nbOccurences: 1,
     color: CardsColors.effect,
+    effect: { text: player(1) + " est le barman", isUnique: true },
     gameMode: [GameModeId.HARDCORE]
   },
   {
@@ -799,7 +819,7 @@ const dumbCards = [
     title: "Jean-Michel à peu près",
     text:
       player(1) +
-      " doit chanter/parler une chanson connue. Il à 1 minute pour la faire deviner. \n" +
+      " doit chanter/parler une chanson connue en n'utilisant que des synonymes. Il à 1 minute pour la faire deviner. \n" +
       "Le premier joueur à trouver la chanson choisi et " +
       player(1) +
       " distribuent chacun 3 gorgées. \n" +
