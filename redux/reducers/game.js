@@ -1,11 +1,11 @@
 import {
   SELECT_GAMEMODE,
-  ADD_CARD,
   ADD_PLAYER,
   DELETE_PLAYER,
   SET_PLAYER_NAME,
   INCREMENT_CURRENT_CARD,
-  DECREMENT_CURRENT_CARD
+  DECREMENT_CURRENT_CARD,
+  DELETE_EFFECT
 } from "../actions/game";
 import CardDeck, {
   introductionCards,
@@ -17,7 +17,7 @@ import CardDeck, {
   ANSWER
 } from "../../ressources/cards";
 import { GameModeId } from "../../ressources/gameModes";
-import { nbCardsMax } from "../../constants/Game";
+import { NB_CARDS_MAX, PLAYER_TAG } from "../../constants/Game";
 
 const initialState = {
   cards: [],
@@ -115,7 +115,15 @@ export default function game(state = initialState, action) {
         ...recalculateGameState(state, newPlayers)
       };
     }
-    //Si une partie est en cours, on va recalculé la dernière carte précalculée
+    /** Effets */
+    case DELETE_EFFECT: {
+      let newEffects = [...state.effects];
+      newEffects.splice(action.index, 1);
+      return {
+        ...state,
+        effects: newEffects
+      };
+    }
     default:
       return state;
   }
@@ -168,7 +176,8 @@ function recalculateGameState(state, newPlayers) {
         newPlayers,
         state.deck,
         [...state.cards],
-        state.upcomingCards
+        state.upcomingCards,
+        state.effects
       );
       return {
         cards: [...newCards],
@@ -189,7 +198,7 @@ function recalculateGameState(state, newPlayers) {
  * @param {*} deck
  * @param {*} cards
  */
-function regenerateLastCard(players, deck, cards, upcomingCards) {
+function regenerateLastCard(players, deck, cards, upcomingCards, effects) {
   let newCards = [...cards];
   let newDeck = [...deck];
   let indexOfLastCard = newCards.length - 1;
@@ -236,7 +245,13 @@ function regenerateLastCard(players, deck, cards, upcomingCards) {
 
   newDeck[lastCardIndexInDeck] = newCardInDeck;
   newCards.splice(indexOfLastCard, 1);
-  let result = generateNextCard(players, newDeck, newCards, newUpcomingCards);
+  let result = generateNextCard(
+    players,
+    newDeck,
+    newCards,
+    newUpcomingCards,
+    effects
+  );
   newCards.push(result.nextCard);
 
   return {
@@ -258,7 +273,6 @@ function regenerateLastCard(players, deck, cards, upcomingCards) {
  */
 function generateNextCard(players, deck, cards, upcomingCards, effects) {
   let cardsLength = cards.length;
-
   let { newCard, newUpcomingCards, newDeck, followingCard } = handleCardDraw(
     deck,
     players,
@@ -266,7 +280,8 @@ function generateNextCard(players, deck, cards, upcomingCards, effects) {
     cardsLength
   );
   //On génère l'effet de la carte précèdente (Celle actuellement affiché et non celle pré-tirée)
-  let newEffects = handleNewEffects(cards[cards.length - 1], effects);
+  let previousCard = cards[cards.length - 1];
+  let newEffects = handleNewEffects(previousCard, effects);
   if (followingCard) {
     followingCard = generateCardId({ ...followingCard, parentId: newCard.id });
     newUpcomingCards.push(generateUpcommingCard(followingCard, cards));
@@ -275,6 +290,14 @@ function generateNextCard(players, deck, cards, upcomingCards, effects) {
   return { nextCard: newCard, newDeck, newUpcomingCards, newEffects };
 }
 
+/**
+ * Retourne la prochaine carte tirée, les upcomingCards à jour ainsi que le deck a jour
+ * et une possible
+ * @param {*} deck
+ * @param {*} players
+ * @param {*} upcomingCards
+ * @param {*} cardsLength
+ */
 function handleCardDraw(deck, players, upcomingCards, cardsLength) {
   let newDeck = [...deck];
   let cleanPlayers = removeEmptyPlayers(players);
@@ -305,6 +328,14 @@ function handleCardDraw(deck, players, upcomingCards, cardsLength) {
   return { newCard, newUpcomingCards, newDeck, followingCard };
 }
 
+/**
+ * Retourne une upcomingCard si une doit sortir
+ * ainsi que la liste des upcomingCard à jour (Carte tirée supprimée)
+ * Si aucune upcomingCard n'est a tirer, la newCard sera undefined
+ * @param {*} upcomingCards
+ * @param {*} cardsLength
+ * @param {*} possibleCards
+ */
 function getUpcomingCard(upcomingCards, cardsLength, possibleCards) {
   let newUpcomingCards = [...upcomingCards];
   let newCard;
@@ -320,7 +351,7 @@ function getUpcomingCard(upcomingCards, cardsLength, possibleCards) {
       let indexOfNextCard = cardsLength;
       return (
         upcomingCard.indexToBeDrawn <= indexOfNextCard ||
-        (possibleCards.length === 0 || cardsLength >= nbCardsMax)
+        (possibleCards.length === 0 || cardsLength >= NB_CARDS_MAX)
       );
     });
     if (upcomingIndex >= 0) {
@@ -332,10 +363,18 @@ function getUpcomingCard(upcomingCards, cardsLength, possibleCards) {
   return { newCard, newUpcomingCards };
 }
 
+/**
+ * Retourne une carte venant du Deck
+ * ou si la partie est finie, retourne la carte de fin
+ * @param {*} deck
+ * @param {*} players
+ * @param {*} cardsLength
+ * @param {*} possibleCards
+ */
 function getCardFromDeck(deck, players, cardsLength, possibleCards) {
   let newDeck = [...deck];
   let followingCard;
-  if (possibleCards.length > 0 && cardsLength < nbCardsMax) {
+  if (possibleCards.length > 0 && cardsLength < NB_CARDS_MAX) {
     let indexOfSelectedCard = Math.floor(Math.random() * possibleCards.length);
     let proccessedCard = proccessCard(
       possibleCards[indexOfSelectedCard],
@@ -389,7 +428,6 @@ function getCardFromDeck(deck, players, cardsLength, possibleCards) {
 
 function handleNewEffects(card, effects) {
   let newEffects = [...effects];
-
   if (card.effect) {
     let newEffect = {
       ...card.effect,
@@ -465,12 +503,14 @@ function initializeGameMode(gamemode, players) {
 
   let deck = createDeck(gamemode);
   let upcomingCards = initialState.upcomingCards;
+  let effects = initialState.effects;
   while (proccessedIntroCards.length < 2) {
     let result = generateNextCard(
       cleanPlayers,
       deck,
       proccessedIntroCards,
-      upcomingCards
+      upcomingCards,
+      effects
     );
     deck = result.newDeck;
     upcomingCards = result.newUpcomingCards;
@@ -480,7 +520,7 @@ function initializeGameMode(gamemode, players) {
     introCards: proccessedIntroCards,
     deck,
     upcomingCards: [...upcomingCards],
-    effects: initialState.effects
+    effects: effects
   };
 }
 
@@ -609,6 +649,9 @@ function proccessCardQuestions(card) {
 /**
  * Fonction permettant de reoturner une carte avec la valeur text
  * renseignée, dans le cas d'une cartes à textes multiples.
+ * L'effet pouvant varié sur les cartes à text multiples
+ * si le text possède un effet, on mettra à jour l'effet de la carte
+ * par l'effet du text selectionné
  */
 function proccessCardText(card, players) {
   let newCard = { ...card };
@@ -619,6 +662,9 @@ function proccessCardText(card, players) {
       return min <= players.length && max >= players.length;
     });
     newCard.text = newText.value;
+    if (newText.effect) {
+      newCard.effect = newText.effect;
+    }
   }
   return newCard;
 }
@@ -684,7 +730,7 @@ function proccessCardPlayers(card, players) {
           text: fillText(
             newCard.followingCard.effect.text,
             player(playerIndex),
-            playerSelected.name
+            PLAYER_TAG + playerSelected.name + PLAYER_TAG
           )
         }
       };
@@ -695,7 +741,7 @@ function proccessCardPlayers(card, players) {
         text: fillText(
           newCard.effect.text,
           player(playerIndex),
-          playerSelected.name
+          PLAYER_TAG + playerSelected.name + PLAYER_TAG
         )
       };
     }

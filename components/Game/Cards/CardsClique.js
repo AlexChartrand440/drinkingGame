@@ -4,7 +4,7 @@ import Card from "./Card/Card";
 import { View, StyleSheet, TouchableHighlight } from "react-native";
 import { Icon } from "expo";
 import Timer from "../Timer/Timer";
-import Effects from "../Effects/Effects";
+import Effects from "../Effects/EffectsContainer";
 import {
   RedirectToPlayerIcon,
   RedirectToModeSelection

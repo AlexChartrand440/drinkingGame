@@ -54,7 +54,14 @@ export const introductionCards = [
           " et " +
           player(2) +
           " sont maintenant membre du conseil des joueurs. Ils seront en charge de régler tout litige au cours de la partie. \n" +
-          "A partir de maintenant, la loi, c'est eux !"
+          "A partir de maintenant, la loi, c'est eux !",
+        effect: {
+          text:
+            player(1) +
+            " et " +
+            player(2) +
+            " sont membre du conseil des joueurs."
+        }
       },
       {
         range: {
@@ -67,7 +74,16 @@ export const introductionCards = [
           " et " +
           player(3) +
           " sont maintenant membre du conseil des joueurs. Ils seront en charge de régler tout litige au cours de la partie. \n" +
-          "A partir de maintenant, la loi, c'est eux !"
+          "A partir de maintenant, la loi, c'est eux !",
+        effect: {
+          text:
+            player(1) +
+            ", " +
+            player(2) +
+            " et " +
+            player(3) +
+            " sont membre du conseil des joueurs. "
+        }
       }
     ],
     author: "Jules",
@@ -478,7 +494,10 @@ const defaultCard = [
     author: "Jimmy",
     nbPlayers: 2,
     nbOccurences: 2,
-    effect: { text: player(1) + " dispose d'une carte de protection" },
+    effect: {
+      text: player(1) + " dispose d'une carte de protection",
+      isUsable: true
+    },
     color: CardsColors.goodEffet,
     gameMode: [GameModeId.MAIN]
   },
