@@ -1,9 +1,11 @@
 import React from "react";
 
-import { View, Text, StyleSheet, TouchableHighlight } from "react-native";
+import { View, Text, StyleSheet, TouchableOpacity } from "react-native";
 import { ScrollView } from "react-native-gesture-handler";
 import Styles from "../../constants/Styles";
 import GameModes from "../../ressources/gameModes";
+import Colors from "../../constants/Colors";
+import { Icon } from "expo";
 
 export default class ModeSelector extends React.Component {
   static navigationOptions = {
@@ -15,26 +17,37 @@ export default class ModeSelector extends React.Component {
     return (
       <View style={Styles.container}>
         <View style={Styles.headerContainer}>
-          <Text style={Styles.headerText}>Choississez votre mode de jeu :</Text>
+          <Text style={{ ...Styles.headerText, fontSize: 45 }}>
+            Mode de jeu
+          </Text>
         </View>
         <ScrollView contentContainerStyle={styles.gameModesContentContainer}>
           {GameModes.map(mode => {
             return (
-              <TouchableHighlight
+              <TouchableOpacity
                 key={mode.id}
                 style={styles.gameModeContainer}
-                underlayColor="white"
                 onPress={() => {
                   onSelectGamemode(mode.id);
                 }}
               >
                 <>
-                  <Text style={styles.gameModeNameText}>{mode.name}</Text>
-                  <Text style={styles.gameModeDescText}>
-                    {mode.description}
-                  </Text>
+                  <View style={styles.gameModeIcon}>
+                    <Icon.Ionicons
+                      name={mode.icon ? mode.icon : "md-help"}
+                      size={30}
+                      color={Colors.secondaryTextColor}
+                      alt="Add player Icon"
+                    />
+                  </View>
+                  <View style={styles.gameModeTexts}>
+                    <Text style={styles.gameModeNameText}>{mode.name}</Text>
+                    <Text style={styles.gameModeDescText}>
+                      {mode.description}
+                    </Text>
+                  </View>
                 </>
-              </TouchableHighlight>
+              </TouchableOpacity>
             );
           })}
         </ScrollView>
@@ -45,23 +58,44 @@ export default class ModeSelector extends React.Component {
 
 const styles = StyleSheet.create({
   gameModesContentContainer: {
-    alignItems: "center"
+    alignItems: "center",
+    flexGrow: 1
   },
   gameModeContainer: {
-    width: 300,
-    marginBottom: 10,
-    borderWidth: 1,
-    borderColor: "#dfe6e9",
-    borderRadius: 8,
-    backgroundColor: "#dfe6e9",
-    padding: 7
+    alignSelf: "stretch",
+    borderRadius: 2,
+    backgroundColor: Colors.secondaryColor,
+    padding: 7,
+    margin: 2,
+    flexDirection: "row",
+    shadowColor: "#000",
+    shadowOffset: {
+      width: 0,
+      height: 1
+    },
+    shadowOpacity: 0.18,
+    shadowRadius: 1.0,
+
+    elevation: 1
+  },
+  gameModeIcon: {
+    alignSelf: "center",
+    padding: 15,
+    borderRightWidth: 1,
+    borderRightColor: Colors.secondaryTextColor,
+    marginRight: 10
+  },
+  gameModeTexts: {
+    flex: 1,
+    flexWrap: "wrap"
   },
   gameModeNameText: {
     fontSize: 20,
-    fontWeight: "bold"
+    color: Colors.secondaryTextColor,
+    alignSelf: "stretch"
   },
   gameModeDescText: {
     fontSize: 14,
-    color: "grey"
+    color: Colors.secondaryTextColor
   }
 });

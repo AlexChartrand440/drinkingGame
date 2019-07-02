@@ -1,9 +1,9 @@
 {
   "expoServerNgrokUrl": "https://rg-736.julesgrateau.drinkinggame.exp.direct",
   "packagerNgrokUrl": "https://packager.rg-736.julesgrateau.drinkinggame.exp.direct",
-  "ngrokPid": 8008,
+  "ngrokPid": 4336,
   "packagerPort": 19001,
-  "packagerPid": 11552,
+  "packagerPid": 7372,
   "expoServerPort": 19000,
   "webpackServerPort": null,
   "devToolsPort": 19002

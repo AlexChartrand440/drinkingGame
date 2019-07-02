@@ -1,7 +1,12 @@
 import React from "react";
 import Card from "./Card/Card";
 
-import { View, StyleSheet, TouchableHighlight } from "react-native";
+import {
+  View,
+  StyleSheet,
+  TouchableHighlight,
+  TouchableOpacity
+} from "react-native";
 import { Icon } from "expo";
 import Timer from "../Timer/Timer";
 import Effects from "../Effects/EffectsContainer";
@@ -33,7 +38,7 @@ export default class CardsClique extends React.Component {
         }}
       >
         {!isFirstCardSelected && (
-          <TouchableHighlight
+          <TouchableOpacity
             style={styles.leftArrow}
             onPress={() => {
               onPressBack();
@@ -47,7 +52,7 @@ export default class CardsClique extends React.Component {
               alt={"Carte précédente"}
               style={{ opacity: 1 }}
             />
-          </TouchableHighlight>
+          </TouchableOpacity>
         )}
         {cards[currentCardIndex].timer && (
           <Timer time={cards[currentCardIndex].timer} />

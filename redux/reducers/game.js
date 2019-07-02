@@ -22,7 +22,11 @@ import { NB_CARDS_MAX, PLAYER_TAG } from "../../constants/Game";
 const initialState = {
   cards: [],
   upcomingCards: [],
-  players: [{ name: "", errors: [] }],
+  players: [
+    { name: "", errors: [] },
+    { name: "", errors: [] },
+    { name: "", errors: [] }
+  ],
   currentCardIndex: 0,
   effects: []
 };

@@ -1,6 +1,6 @@
 import React from "react";
 
-import { StyleSheet, TouchableHighlight } from "react-native";
+import { StyleSheet, TouchableOpacity } from "react-native";
 import { Icon } from "expo";
 
 export class ButtonIcon extends React.Component {
@@ -19,7 +19,7 @@ export class ButtonIcon extends React.Component {
       size
     } = this.props;
     return (
-      <TouchableHighlight style={{ ...styles.container, ...position }}>
+      <TouchableOpacity style={{ ...styles.container, ...position }}>
         <>
           <Icon.Ionicons
             name={icon}
@@ -32,7 +32,7 @@ export class ButtonIcon extends React.Component {
             alt={alt}
           />
         </>
-      </TouchableHighlight>
+      </TouchableOpacity>
     );
   }
 }
@@ -40,13 +40,22 @@ export class ButtonIcon extends React.Component {
 const styles = StyleSheet.create({
   container: {
     zIndex: 1,
-    backgroundColor: "#dfe6e9",
+    backgroundColor: "#FFFFFF",
     position: "absolute",
     width: 44,
     height: 44,
     borderRadius: 44 / 2,
     justifyContent: "center",
-    alignItems: "center"
+    alignItems: "center",
+    shadowColor: "#000",
+    shadowOffset: {
+      width: 0,
+      height: 1
+    },
+    shadowOpacity: 0.18,
+    shadowRadius: 1.0,
+
+    elevation: 1
   }
 });
 
