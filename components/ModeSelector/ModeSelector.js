@@ -13,25 +13,34 @@ export default class ModeSelector extends React.Component {
   };
 
   render() {
-    const { onSelectGamemode } = this.props;
+    const { onSelectGamemode, onResume, gameMode } = this.props;
     return (
       <View style={Styles.container}>
         <View style={Styles.headerContainer}>
-          <Text style={{ ...Styles.headerText, fontSize: 45 }}>
-            Mode de jeu
+          <Text style={{ ...Styles.headerText, fontSize: 40 }}>
+            Modes de jeu
           </Text>
         </View>
         <ScrollView contentContainerStyle={styles.gameModesContentContainer}>
           {GameModes.map(mode => {
+            let selected = gameMode === mode.id;
+            //TODO ; Get rid of TouchableOpacity if selected true
             return (
-              <TouchableOpacity
+              <GamemodeWrapper
+                selected={selected}
                 key={mode.id}
                 style={styles.gameModeContainer}
-                onPress={() => {
-                  onSelectGamemode(mode.id);
-                }}
+                onPress={
+                  selected
+                    ? () => {
+                        return false;
+                      }
+                    : () => {
+                        onSelectGamemode(mode.id);
+                      }
+                }
               >
-                <>
+                <View style={styles.gameModeInfos}>
                   <View style={styles.gameModeIcon}>
                     <Icon.Ionicons
                       name={mode.icon ? mode.icon : "md-help"}
@@ -46,8 +55,34 @@ export default class ModeSelector extends React.Component {
                       {mode.description}
                     </Text>
                   </View>
-                </>
-              </TouchableOpacity>
+                </View>
+                {selected && (
+                  <View style={styles.gameModeActions}>
+                    <TouchableOpacity
+                      style={{
+                        ...styles.gamemodeAction,
+                        borderRightColor: Colors.secondaryDarkColor,
+                        borderRightWidth: 1
+                      }}
+                      onPress={() => onResume()}
+                    >
+                      <Text style={styles.gamemodeActionText}>
+                        {" "}
+                        Reprendre la partie{" "}
+                      </Text>
+                    </TouchableOpacity>
+                    <TouchableOpacity
+                      style={styles.gamemodeAction}
+                      onPress={() => onSelectGamemode(mode.id)}
+                    >
+                      <Text style={styles.gamemodeActionText}>
+                        {" "}
+                        Recommencer
+                      </Text>
+                    </TouchableOpacity>
+                  </View>
+                )}
+              </GamemodeWrapper>
             );
           })}
         </ScrollView>
@@ -55,6 +90,18 @@ export default class ModeSelector extends React.Component {
     );
   }
 }
+
+const GamemodeWrapper = ({ selected, children, onPress }) => {
+  if (selected) {
+    return <View style={styles.gameModeContainer}>{children}</View>;
+  } else {
+    return (
+      <TouchableOpacity style={styles.gameModeContainer} onPress={onPress}>
+        {children}
+      </TouchableOpacity>
+    );
+  }
+};
 
 const styles = StyleSheet.create({
   gameModesContentContainer: {
@@ -65,9 +112,8 @@ const styles = StyleSheet.create({
     alignSelf: "stretch",
     borderRadius: 2,
     backgroundColor: Colors.secondaryColor,
-    padding: 7,
     margin: 2,
-    flexDirection: "row",
+    flexWrap: "wrap",
     shadowColor: "#000",
     shadowOffset: {
       width: 0,
@@ -77,6 +123,12 @@ const styles = StyleSheet.create({
     shadowRadius: 1.0,
 
     elevation: 1
+  },
+  gameModeInfos: {
+    flexDirection: "row",
+    padding: 7,
+    borderBottomColor: Colors.secondaryDarkColor,
+    borderBottomWidth: 1
   },
   gameModeIcon: {
     alignSelf: "center",
@@ -97,5 +149,18 @@ const styles = StyleSheet.create({
   gameModeDescText: {
     fontSize: 14,
     color: Colors.secondaryTextColor
+  },
+  gameModeActions: {
+    flexDirection: "row",
+    alignItems: "center"
+  },
+  gamemodeAction: {
+    flex: 0.5,
+    alignItems: "center",
+    padding: 8
+  },
+  gamemodeActionText: {
+    color: Colors.secondaryTextColor,
+    fontSize: 18
   }
 });

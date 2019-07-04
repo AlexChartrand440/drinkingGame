@@ -14,6 +14,7 @@ import {
   RedirectToPlayerIcon,
   RedirectToModeSelection
 } from "../ButtonIcon/ButtonIcon";
+import Colors from "../../../constants/Colors";
 
 export default class CardsClique extends React.Component {
   static navigationOptions = {
@@ -34,7 +35,7 @@ export default class CardsClique extends React.Component {
       <View
         style={{
           ...styles.container,
-          backgroundColor: cards[currentCardIndex].color
+          backgroundColor: cards[currentCardIndex].color.backgroundColor
         }}
       >
         {!isFirstCardSelected && (
@@ -48,7 +49,7 @@ export default class CardsClique extends React.Component {
             <Icon.Ionicons
               name={"md-rewind"}
               size={45}
-              color={"black"}
+              color={cards[currentCardIndex].color.color}
               alt={"Carte précédente"}
               style={{ opacity: 1 }}
             />

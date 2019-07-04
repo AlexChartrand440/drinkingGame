@@ -1,6 +1,6 @@
 import React from "react";
 
-import { View, Text, StyleSheet, TouchableOpacity } from "react-native";
+import { View, Text, StyleSheet, TouchableOpacity, Image } from "react-native";
 import { ScrollView, TextInput } from "react-native-gesture-handler";
 import { Icon } from "expo";
 import Styles from "../../constants/Styles";
@@ -28,7 +28,10 @@ export default class PlayerSelector extends React.Component {
     return (
       <View style={{ ...Styles.contentContainer, ...Styles.container }}>
         <View style={Styles.headerContainer}>
-          <Text style={{ ...Styles.headerText, fontSize: 65 }}>Alcolol</Text>
+          <Image
+            style={{ width: "100%", resizeMode: "contain" }}
+            source={require("./../../assets/images/titleImage.png")}
+          />
         </View>
         <ScrollView
           ref={ref => (this.scrollView = ref)}

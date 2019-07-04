@@ -5,9 +5,11 @@ export default class Card extends PureComponent {
   render() {
     const { title, text, color } = this.props;
     return (
-      <View style={{ ...styles.cardView, backgroundColor: color }}>
-        <Text style={styles.cardTitle}>{title}</Text>
-        <Text style={styles.cardText}>{text}</Text>
+      <View
+        style={{ ...styles.cardView, backgroundColor: color.backgroundColor }}
+      >
+        <Text style={{ ...styles.cardTitle, color: color.color }}>{title}</Text>
+        <Text style={{ ...styles.cardText, color: color.color }}>{text}</Text>
       </View>
     );
   }
@@ -20,17 +22,21 @@ const styles = StyleSheet.create({
     bottom: 0,
     left: 0,
     right: 0,
-    flexDirection: "column",
-    padding: 30
+    flexDirection: "column"
   },
   cardText: {
-    fontSize: 18,
+    fontSize: 20,
     textAlign: "center",
-    padding: 30
+    paddingLeft: 120,
+    paddingRight: 120
   },
   cardTitle: {
-    fontSize: 26,
+    fontSize: 35,
     textAlign: "center",
-    marginBottom: 30
+    marginTop: 30,
+    marginBottom: 30,
+    marginLeft: 120,
+    marginRight: 120,
+    fontFamily: "mainFont"
   }
 });

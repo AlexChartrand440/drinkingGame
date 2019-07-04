@@ -12,9 +12,9 @@ export default StyleSheet.create({
   },
   headerText: {
     alignSelf: "center",
-    fontWeight: "900",
     textAlign: "center",
-    color: Colors.primaryTextColor
+    color: Colors.primaryTextColor,
+    fontFamily: "mainFont"
   },
   contentContainer: {
     backgroundColor: Colors.primaryColor

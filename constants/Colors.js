@@ -1,10 +1,28 @@
 export const CardsColors = {
-  main: "#3c6382",
-  effect: "#ff6b6b",
-  goodEffet: "#f8c291",
-  averageDrinkAction: "#fa983a",
-  hardDrinkAction: "#eb2f06",
-  game: "#78e08f"
+  main: {
+    backgroundColor: "#3c6382",
+    color: "#ffffff"
+  },
+  effect: {
+    backgroundColor: "#ff6b6b",
+    color: "#000000"
+  },
+  goodEffet: {
+    backgroundColor: "#f8c291",
+    color: "#000000"
+  },
+  averageDrinkAction: {
+    backgroundColor: "#fa983a",
+    color: "#000000"
+  },
+  hardDrinkAction: {
+    backgroundColor: "#eb2f06",
+    color: "#000000"
+  },
+  game: {
+    backgroundColor: "#78e08f",
+    color: "#000000"
+  }
 };
 
 const whiteTheme = {

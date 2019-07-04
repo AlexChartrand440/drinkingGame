@@ -117,9 +117,9 @@ class RemoveEffectButton extends PureComponent {
         style={styles.removeEffectButton}
         name="md-trash"
         size={30}
-        color={"red"}
+        color={Colors.errorColor}
         onPress={this.props.onPress}
-        alt={"coucou"}
+        alt={"Suppression de l'effet"}
       />
     );
   }
