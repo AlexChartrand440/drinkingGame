@@ -5,7 +5,7 @@ import { ScrollView } from "react-native-gesture-handler";
 import Styles from "../../constants/Styles";
 import GameModes from "../../ressources/gameModes";
 import Colors from "../../constants/Colors";
-import { Icon } from "expo";
+import * as Icon from '@expo/vector-icons';
 
 export default class ModeSelector extends React.Component {
   static navigationOptions = {

@@ -2,7 +2,7 @@ import React from "react";
 
 import { View, Text, StyleSheet, TouchableOpacity, Image } from "react-native";
 import { ScrollView, TextInput } from "react-native-gesture-handler";
-import { Icon } from "expo";
+import * as Icon from "@expo/vector-icons";
 import Styles from "../../constants/Styles";
 import Colors from "../../constants/Colors";
 

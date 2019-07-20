@@ -1,6 +1,7 @@
 import React from "react";
 import { Platform, StatusBar } from "react-native";
-import { Font, Icon } from "expo";
+import * as Icon from "@expo/vector-icons";
+import * as Font from "expo-font";
 import AppNavigator from "./navigation/AppNavigator";
 import { Provider } from "react-redux";
 import { createStore } from "redux";

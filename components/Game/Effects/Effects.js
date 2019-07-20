@@ -2,7 +2,7 @@ import React, { PureComponent } from "react";
 import { View, Text, StyleSheet } from "react-native";
 import { OpenEffects, ButtonIcon } from "../ButtonIcon/ButtonIcon";
 import { ScrollView } from "react-native-gesture-handler";
-import { Icon } from "expo";
+import * as Icon from '@expo/vector-icons';
 import { PLAYER_TAG } from "../../../constants/Game";
 import Colors from "../../../constants/Colors";
 

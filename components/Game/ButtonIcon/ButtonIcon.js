@@ -1,7 +1,7 @@
 import React from "react";
 
 import { StyleSheet, TouchableOpacity } from "react-native";
-import { Icon } from "expo";
+import * as Icon from '@expo/vector-icons';
 
 export class ButtonIcon extends React.Component {
   static navigationOptions = {

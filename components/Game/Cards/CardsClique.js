@@ -7,7 +7,7 @@ import {
   TouchableHighlight,
   TouchableOpacity
 } from "react-native";
-import { Icon } from "expo";
+import * as Icon from '@expo/vector-icons';
 import Timer from "../Timer/Timer";
 import Effects from "../Effects/EffectsContainer";
 import {

@@ -1,7 +1,7 @@
 import React from "react";
 import { View, Text, StyleSheet, TouchableHighlight } from "react-native";
 import { OpenTimer } from "../ButtonIcon/ButtonIcon";
-import { Icon } from "expo";
+import * as Icon from '@expo/vector-icons';
 
 export default class Timer extends React.Component {
   constructor(props) {
