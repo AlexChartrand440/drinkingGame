@@ -138,7 +138,8 @@ const mainCard = [
   {
     title: "Le mot le plus long",
     text:
-      "Chaque joueur doit dire une lettre qui, à la suite des lettres précédentes, forme le debut d'un mot ou un mot complet. Le joueur qui ne trouve pas bois " +
+      "Chaque joueur doit dire une lettre qui, à la suite des lettres précédentes, forme le debut d'un mot ou un mot complet. " +
+      "Le joueur qui ne trouve pas bois " +
       number(1) +
       " gorgées. " +
       player(1) +
@@ -183,7 +184,7 @@ const mainCard = [
       " pendant le temps du mime)",
     author: "Pierre",
     nbPlayers: 2,
-    nbOccurences: 4,
+    nbOccurences: 2,
     timer: 30,
     color: CardsColors.game,
     gameMode: [GameModeId.MAIN]
@@ -232,7 +233,7 @@ const mainCard = [
       "Jusqu'à nouvel ordre, " +
       player(1) +
       " n'a pas le droit de parler sauf si une question lui est directement posé par un autre joueur. \n" +
-      "Si il venait à prendre la parole sans en avoir le droit il devra prendre 2 gorgées par intenvention non autorisée.",
+      "Si il venait à prendre la parole sans en avoir le droit il devra prendre 1 gorgées par intenvention non autorisée.",
     author: "Silab",
     nbPlayers: 2,
     nbOccurences: 1,
@@ -263,7 +264,7 @@ const mainCard = [
       " boit 3 gorgées.",
     author: "Pierre",
     nbPlayers: 2,
-    nbOccurences: 4,
+    nbOccurences: 3,
     timer: 60,
     color: CardsColors.game,
     gameMode: [GameModeId.MAIN]
@@ -415,6 +416,47 @@ const mainCard = [
     nbOccurences: 2,
     color: CardsColors.game,
     gameMode: [GameModeId.MAIN]
+  },
+  {
+    title: "Battle de dance",
+    text:
+      player(1) +
+      " et " +
+      player(2) +
+      " nous montrent leurs plus beaux pas de dance. Le plus aimé du publique donnes 3 gorgées" +
+      ". 5 gorgées en cas de refus",
+    nbPlayers: 2,
+    nbOccurences: 2,
+    color: CardsColors.game,
+    gameMode: [GameModeId.MAIN]
+  },
+  {
+    title: "Designez le !",
+    text:
+      "Au top, les joueurs désignent du doigt la personne " +
+      WORD +
+      "La personne désigné à la majorité boit " +
+      number(1) +
+      " gorgées",
+    ranges: [
+      {
+        min: 1,
+        max: 3
+      }
+    ],
+    words: [
+      "la plus bordélique",
+      "la plus mélomane",
+      "la plus fleur bleue",
+      "la plus aventurière",
+      "la plus droguée",
+      "la plus junkie",
+      "la moins sociable"
+    ],
+    nbPlayers: 2,
+    nbOccurences: 2,
+    color: CardsColors.game,
+    gameMode: [GameModeId.MAIN]
   }
 ];
 
@@ -455,7 +497,7 @@ const anyCard = [
       "Elle doit boire les gorgées qui lui sont attribués par le Mac (aux conditions de sa règle). \n" +
       "Le Mac arrive !",
     author: "Etienne",
-    nbPlayers: 3,
+    nbPlayers: 5,
     nbOccurences: 2,
     color: CardsColors.game,
     gameMode: [GameModeId.ANY],
@@ -503,7 +545,7 @@ const anyCard = [
       " commence.",
     author: "Richard",
     nbPlayers: 2,
-    nbOccurences: 4,
+    nbOccurences: 2,
     color: CardsColors.game,
     gameMode: [GameModeId.ANY],
     words: themesMain
@@ -528,7 +570,7 @@ const anyCard = [
       "Le premier à bouger (Y compris la reine des freeze) boit 1 gorgée. ",
     author: "Jules",
     nbPlayers: 3,
-    nbOccurences: 3,
+    nbOccurences: 2,
     effect: { text: player(1) + " est la reine des freeze", isUnique: true },
     color: CardsColors.effect,
     gameMode: [GameModeId.ANY]
@@ -553,19 +595,16 @@ const anyCard = [
       "H",
       "I",
       "J",
-      "K",
       "L",
       "M",
       "N",
       "O",
       "P",
-      "Q",
       "R",
       "S",
       "T",
       "U",
-      "V",
-      "Z"
+      "V"
     ],
     author: "Jules",
     nbPlayers: 3,
@@ -631,7 +670,7 @@ const hardcoreCards = [
   {
     title: "Aux frères tombés au combats",
     text:
-      "Tous les joueurs trinques et prennes un shooter, en mémoire à tous leurs frères et soeurs tombés au combat.",
+      "Tous les joueurs trinques et prennes un shooter, en mémoire à leurs frères et soeurs tombés au combat.",
     author: "Ugo",
     nbPlayers: 3,
     nbOccurences: 1,
@@ -778,8 +817,11 @@ const hardcoreCards = [
       player(1) +
       " et " +
       player(2) +
-      " partagent maintenant des électrons. Ils doivent se servir un verre commun et le finir avant un de leur verres respectifs. \n" +
-      " S'ils ne le finissent pas à temps, ils prennent un shot chacun.",
+      " partagent maintenant des électrons. Un verre commun va leur être servi et ils doivent le finir avant un de leur verres" +
+      " respectifs. \n" +
+      " S'ils ne le finissent pas à temps, ils prennent un shot chacun." +
+      player(3) +
+      " est chargé de servir le verre commun",
     author: "Pierre",
     nbPlayers: 3,
     nbOccurences: 1,
@@ -822,6 +864,41 @@ const hardcoreCards = [
     nbOccurences: 1,
     color: CardsColors.hardDrinkAction,
     gameMode: [GameModeId.HARDCORE]
+  },
+  {
+    title: "Le kamikaze",
+    text:
+      player(1) +
+      " bois le nombre de gorgées/shots de sont choix. Il choisi un joueur qui les boiera avec lui.",
+    nbPlayer: 4,
+    nbOccurences: 1,
+    color: CardsColors.hardDrinkAction,
+    gameMode: [GameModeId.HARDCORE]
+  },
+  {
+    title: "Designez le !",
+    text:
+      "Au top, les joueurs désignent du doigt la personne " +
+      WORD +
+      "La personne désigné à la majorité boit " +
+      number(1) +
+      " gorgées",
+    ranges: [
+      {
+        min: 2,
+        max: 5
+      }
+    ],
+    words: [
+      "la plus alcoolique",
+      "la plus succeptible de vomir ce soir",
+      "la plus schlag",
+      "la plus enclin à prendre des shooters",
+    ],
+    nbPlayers: 2,
+    nbOccurences: 2,
+    color: CardsColors.game,
+    gameMode: [GameModeId.HARDCORE]
   }
 ];
 
@@ -857,7 +934,8 @@ const dumbCards = [
     title: "Jean-Michel à peu près",
     text:
       player(1) +
-      " doit chanter/parler une chanson connue en n'utilisant que des synonymes. Il à 1 minute pour la faire deviner. \n" +
+      " doit chanter/parler une chanson connue en n'utilisant que des synonymes (où en la traduisant depuis l'anglais)." +
+      " Il à 1 minute pour la faire deviner. \n" +
       player(1) +
       " ainsi que le premier joueur ayant trouvé la chanson distribuent chacun 3 gorgées. \n" +
       "Si personne ne trouve la chanson, " +
@@ -1023,6 +1101,32 @@ const dumbCards = [
       "t'asseoir sur un penis et manger un gateau ou t'asseoir sur un gateau et manger un penis ?",
       "coucher avec ta mère ou coucher avec ton père",
       "passer un oral complètement nu devant des inconnus ou devoir aller une journée au travail complètement nu"
+    ],
+    nbPlayers: 2,
+    nbOccurences: 2,
+    color: CardsColors.game,
+    gameMode: [GameModeId.DUMB]
+  },
+  {
+    title: "Designez le !",
+    text:
+      "Au top, les joueurs désignent du doigt la personne " +
+      WORD +
+      "La personne désigné à la majorité boit " +
+      number(1) +
+      " gorgées",
+    ranges: [
+      {
+        min: 2,
+        max: 5
+      }
+    ],
+    words: [
+      "la plus intelligente",
+      "la plus chaude",
+      "la mieux foutue",
+      "la mieux membrées",
+      "la plus enclin à prendre des shooters",
     ],
     nbPlayers: 2,
     nbOccurences: 2,
