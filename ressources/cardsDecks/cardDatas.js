@@ -1,3 +1,17 @@
+export const PLAYER = "#PLAYER";
+const NUMBER = "#NUMBER";
+export const WORD = "#WORD";
+export const QUESTION = "#QUESTION";
+export const ANSWER = "#ANSWER";
+
+export function player(index) {
+  return PLAYER + index;
+}
+
+export function number(index) {
+  return NUMBER + index;
+}
+
 export const themesMain = [
   "Les marques de cigarettes",
   "Les marques de sous-vêtement",

@@ -7,15 +7,18 @@ import {
   DECREMENT_CURRENT_CARD,
   DELETE_EFFECT
 } from "../actions/game";
-import CardDeck, {
-  introductionCards,
-  endCard,
+import CardDeck from "../../ressources/cards";
+import introductionCards from "../../ressources/cardsDecks/introductionCards";
+import endCard from "../../ressources/cardsDecks/endCards";
+
+import {
   WORD,
   player,
   number,
   QUESTION,
   ANSWER
-} from "../../ressources/cards";
+} from "../../ressources/cardsDecks/cardDatas";
+
 import { GameModeId } from "../../ressources/gameModes";
 import { NB_CARDS_MAX, PLAYER_TAG } from "../../constants/Game";
 

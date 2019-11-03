@@ -23,7 +23,7 @@
     "android": {
       "package": "com.julesgrateau.alcolol",
       "permissions": [],
-      "versionCode": 4
+      "versionCode": 6
     }
   }
 }
