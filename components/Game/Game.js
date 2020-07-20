@@ -1,5 +1,5 @@
 import React from "react";
-import { ScreenOrientation } from "expo";
+import * as ScreenOrientation from "expo-screen-orientation";
 import CardsContainer from "./Cards/CardsContainer";
 
 export default class Game extends React.Component {
@@ -7,11 +7,11 @@ export default class Game extends React.Component {
     header: null
   };
   componentDidMount() {
-    ScreenOrientation.lockAsync(ScreenOrientation.Orientation.LANDSCAPE_RIGHT);
+    ScreenOrientation.lockAsync(ScreenOrientation.OrientationLock.LANDSCAPE);
   }
 
   componentWillUnmount() {
-    ScreenOrientation.lockAsync(ScreenOrientation.Orientation.PORTRAIT);
+    ScreenOrientation.lockAsync(ScreenOrientation.OrientationLock.PORTRAIT);
   }
 
   render() {

@@ -358,7 +358,8 @@ function getUpcomingCard(upcomingCards, cardsLength, possibleCards) {
       let indexOfNextCard = cardsLength;
       return (
         upcomingCard.indexToBeDrawn <= indexOfNextCard ||
-        (possibleCards.length === 0 || cardsLength >= NB_CARDS_MAX)
+        possibleCards.length === 0 ||
+        cardsLength >= NB_CARDS_MAX
       );
     });
     if (upcomingIndex >= 0) {

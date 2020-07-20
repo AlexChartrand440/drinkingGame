@@ -7,7 +7,7 @@ import {
   TouchableHighlight,
   TouchableOpacity
 } from "react-native";
-import * as Icon from '@expo/vector-icons';
+import * as Icon from "@expo/vector-icons";
 import Timer from "../Timer/Timer";
 import Effects from "../Effects/EffectsContainer";
 import {
@@ -31,11 +31,13 @@ export default class CardsClique extends React.Component {
       isFirstCardSelected,
       effects
     } = this.props;
+    let currCard = cards[currentCardIndex];
+
     return (
       <View
         style={{
           ...styles.container,
-          backgroundColor: cards[currentCardIndex].color.backgroundColor
+          backgroundColor: currCard.color.backgroundColor
         }}
       >
         {!isFirstCardSelected && (
@@ -49,15 +51,13 @@ export default class CardsClique extends React.Component {
             <Icon.Ionicons
               name={"md-rewind"}
               size={45}
-              color={cards[currentCardIndex].color.color}
+              color={currCard.color.color}
               alt={"Carte précédente"}
               style={{ opacity: 1 }}
             />
           </TouchableOpacity>
         )}
-        {cards[currentCardIndex].timer && (
-          <Timer time={cards[currentCardIndex].timer} />
-        )}
+        {cards[currentCardIndex].timer && <Timer time={currCard.timer} />}
         <Effects effects={effects} />
 
         <TouchableHighlight
@@ -67,7 +67,7 @@ export default class CardsClique extends React.Component {
           }}
           underlayColor={"transparent"}
         >
-          <Card {...cards[currentCardIndex]} />
+          <Card {...currCard} />
         </TouchableHighlight>
         <RedirectToPlayerIcon
           onPress={() => {

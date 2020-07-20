@@ -1,7 +1,7 @@
 import React from "react";
 import { Platform, StatusBar } from "react-native";
-import * as Icon from "@expo/vector-icons";
 import * as Font from "expo-font";
+import { Ionicons } from "@expo/vector-icons";
 import AppNavigator from "./navigation/AppNavigator";
 import { Provider } from "react-redux";
 import { createStore } from "redux";
@@ -35,9 +35,9 @@ export default class App extends React.Component {
   }
 
   _loadResourcesAsync = async () => {
-    return Promise.all([
+    await Promise.all([
       Font.loadAsync({
-        ...Icon.Ionicons.font,
+        ...Ionicons.font,
         mainFont: require("./assets/fonts/MeriendaOne-Regular.ttf")
       })
     ]);

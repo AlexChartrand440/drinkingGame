@@ -1,7 +1,7 @@
 import React from "react";
 
 import { StyleSheet, TouchableOpacity } from "react-native";
-import * as Icon from '@expo/vector-icons';
+import { Ionicons } from "@expo/vector-icons";
 
 export class ButtonIcon extends React.Component {
   static navigationOptions = {
@@ -21,7 +21,7 @@ export class ButtonIcon extends React.Component {
     return (
       <TouchableOpacity style={{ ...styles.container, ...position }}>
         <>
-          <Icon.Ionicons
+          <Ionicons
             name={icon}
             size={size}
             color={color}
