@@ -15,3 +15,7 @@ npm install
 expo start
 
 Then, using the expo phone app, you should be able to try the app
+
+You can also find this app on the Play Store in the link below :
+
+https://play.google.com/store/apps/details?id=com.julesgrateau.alcolol (Only in French language)
